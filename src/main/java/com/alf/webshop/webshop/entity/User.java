@@ -10,15 +10,15 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 @Entity(name = "User")
 @Table(name = "users")
-@NoArgsConstructor
 public class User {
 
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue
-    private UUID id;
+    private Long id;
 
     @NotNull(message = "Role should not be null")
     @Column(name = "role")
@@ -34,6 +34,7 @@ public class User {
     @NotNull(message = "Password cannot be null")
     @NotBlank(message = "Password cannot be blank")
     @Length(min = 5, max = 60)
+    @Pattern(regexp = "(?=(.*[0-9]))((?=.*[A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z]))^.{8,}$", message = "Password must have 1 lowercase letter, 1 uppercase letter, 1 number, and be at least 8 characters long")
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -48,4 +49,8 @@ public class User {
     @Pattern(regexp = "[+]?[0-9]{1,3}[0-9]{1,2}[0-9]{7}", message = "Telephone number should be a valid number and cannot be separated with symbols or spaces. Like +36201234567 or 0611234567")
     @Column(name = "telephone")
     private String telephone;
+
+    @OneToOne
+    @JoinColumn(name = "cart")
+    private Cart cart;
 }
