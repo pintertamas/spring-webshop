@@ -20,6 +20,10 @@ public class Item {
     @GeneratedValue
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "creator_id", nullable = false)
+    private User creator;
+
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -34,5 +38,6 @@ public class Item {
     private List<Image> images;
 
     @ManyToMany
+    @ToString.Exclude
     private List<Cart> cart;
 }

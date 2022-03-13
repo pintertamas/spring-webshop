@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -20,8 +21,13 @@ public class Cart {
     private User user;
 
     @ManyToMany
-    private List<Item> item;
+    private List<Item> items;
 
     @Column(name = "quantity")
     public int quantity;
+
+    public Cart(User _user) {
+        this.user = _user;
+        this.items = new ArrayList<>();
+    }
 }

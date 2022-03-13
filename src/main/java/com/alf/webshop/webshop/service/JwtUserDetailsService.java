@@ -2,6 +2,7 @@ package com.alf.webshop.webshop.service;
 
 import java.util.List;
 
+import com.alf.webshop.webshop.entity.Cart;
 import com.alf.webshop.webshop.entity.Role;
 import com.alf.webshop.webshop.entity.User;
 import com.alf.webshop.webshop.repository.UserRepository;
@@ -40,6 +41,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     }
 
     public User save(User user) {
+        //user.setCart(new Cart(user));
         user.setPassword(bcryptEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
