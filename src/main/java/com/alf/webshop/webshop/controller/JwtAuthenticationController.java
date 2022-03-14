@@ -2,6 +2,9 @@ package com.alf.webshop.webshop.controller;
 
 import com.alf.webshop.webshop.config.JwtTokenUtil;
 import com.alf.webshop.webshop.entity.Cart;
+import com.alf.webshop.webshop.exception.CartNotFoundException;
+import com.alf.webshop.webshop.exception.UserCannotDeleteThemselfException;
+import com.alf.webshop.webshop.exception.UserNotFoundException;
 import com.alf.webshop.webshop.model.IdRequest;
 import com.alf.webshop.webshop.model.JwtRequest;
 import com.alf.webshop.webshop.model.JwtResponse;
@@ -9,12 +12,12 @@ import com.alf.webshop.webshop.entity.User;
 import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.UserRepository;
 import com.alf.webshop.webshop.service.JwtUserDetailsService;
+import com.alf.webshop.webshop.service.UserService;
 import org.apache.juli.logging.LogFactory;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -24,9 +27,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
 @RestController
 @CrossOrigin
@@ -46,6 +46,9 @@ public class JwtAuthenticationController {
 
     @Autowired
     private JwtUserDetailsService userDetailsService;
+
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
@@ -97,26 +100,24 @@ public class JwtAuthenticationController {
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@RequestBody IdRequest request) {
+
         User user = userRepository.findUserById(request.getId());
-        if (user == null) {
-            LoggerFactory.getLogger(this.getClass()).error("USER WITH ID: " + request + " COULD NOT BE FOUND");
-            return new ResponseEntity<>("User could not be found!", HttpStatus.NOT_FOUND);
-        }
-
         Cart cart = cartRepository.findCartById(user.getCart().getId());
-        if (cart == null) {
-            LoggerFactory.getLogger(this.getClass()).error("CART WITH ID: " + user.getCart().getId() + " COULD NOT BE FOUND");
-            return new ResponseEntity<>("Cart could not be found!", HttpStatus.NOT_FOUND);
-        }
-
         try {
-            userRepository.delete(user);
-            cartRepository.delete(cart);
+            userService.deleteUser(request.getId());
+        } catch (UserCannotDeleteThemselfException ucdt) {
+            LoggerFactory.getLogger(this.getClass()).error("USER CANNOT DELETE THEMSELF");
+            return new ResponseEntity<>(ucdt.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (UserNotFoundException unfe) {
+            LoggerFactory.getLogger(this.getClass()).error("USER WITH ID: " + request + " COULD NOT BE FOUND");
+            return new ResponseEntity<>(unfe.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (CartNotFoundException cnfe) {
+            LoggerFactory.getLogger(this.getClass()).error("CART WITH ID: " + cart.getId() + " COULD NOT BE FOUND");
+            return new ResponseEntity<>(cnfe.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             LogFactory.getLog(this.getClass()).error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
 
         LoggerFactory.getLogger(this.getClass()).info("USER DELETED: " + user);
         return ResponseEntity.ok("User was deleted successfully!");

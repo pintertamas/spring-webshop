@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @SpringBootApplication
 public class WebshopApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(WebshopApplication.class, args);
     }
