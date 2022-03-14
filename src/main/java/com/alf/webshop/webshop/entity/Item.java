@@ -21,10 +21,6 @@ public class Item {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "creator_id", nullable = false)
-    private User creator;
-
     @Column(name = "name", nullable = false)
     private String name;
 

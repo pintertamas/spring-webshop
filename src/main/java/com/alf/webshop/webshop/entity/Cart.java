@@ -23,4 +23,8 @@ public class Cart {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private List<Item> items = new ArrayList<>();
+
+    public void addItem(Item newItem) {
+        this.items.add(newItem);
+    }
 }

@@ -34,7 +34,6 @@ public class ItemController {
     public ResponseEntity<Item> createItem(@Valid @RequestBody ItemRequest _itemRequest) {
         Item _item = new Item();
         String token = JwtTokenUtil.getToken();
-        _item.setCreator(jwtTokenUtil.getUserFromToken(token));
         _item.setName(_itemRequest.getName());
         _item.setDescription(_itemRequest.getDescription());
         _item.setPrice(_itemRequest.getPrice());
