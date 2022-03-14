@@ -4,8 +4,7 @@ import com.alf.webshop.webshop.config.JwtTokenUtil;
 import com.alf.webshop.webshop.entity.Cart;
 import com.alf.webshop.webshop.entity.Item;
 import com.alf.webshop.webshop.entity.User;
-import com.alf.webshop.webshop.model.ItemIdRequest;
-import com.alf.webshop.webshop.model.ItemRequest;
+import com.alf.webshop.webshop.model.IdRequest;
 import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.ItemRepository;
 import org.apache.commons.logging.LogFactory;
@@ -33,15 +32,15 @@ public class CartController {
     private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addItemToCart(@Valid @RequestBody ItemIdRequest itemId) {
+    public ResponseEntity<?> addItemToCart(@Valid @RequestBody IdRequest request) {
         String token = JwtTokenUtil.getToken();
         User user = jwtTokenUtil.getUserFromToken(token);
         Cart cart = cartRepository.findCartById(user.getCart().getId());
-        Item item = itemRepository.findItemById(itemId.getItemId());
+        Item item = itemRepository.findItemById(request.getId());
 
         if (cart == null || item == null) {
             LogFactory.getLog(this.getClass()).error("CART OR ITEM COULD NOT BE FOUND!");
-            return new ResponseEntity<>("Cart or item could not be found!", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Cart or item could not be found!", HttpStatus.NOT_FOUND);
         }
 
         try {

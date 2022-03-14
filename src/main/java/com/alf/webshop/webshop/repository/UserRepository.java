@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
+    User findUserById(Long id);
     User findUserByUsername(String username);
     ArrayList<User> findUsersByLastLoginTimeBefore(Date lastLoginTimeBefore);
 }

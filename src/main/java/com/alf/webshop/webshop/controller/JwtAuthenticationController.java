@@ -2,6 +2,7 @@ package com.alf.webshop.webshop.controller;
 
 import com.alf.webshop.webshop.config.JwtTokenUtil;
 import com.alf.webshop.webshop.entity.Cart;
+import com.alf.webshop.webshop.model.IdRequest;
 import com.alf.webshop.webshop.model.JwtRequest;
 import com.alf.webshop.webshop.model.JwtResponse;
 import com.alf.webshop.webshop.entity.User;
@@ -19,11 +20,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.sql.Date;
@@ -96,5 +93,32 @@ public class JwtAuthenticationController {
 
         LoggerFactory.getLogger(this.getClass()).info("USER CREATED: " + newUser);
         return ResponseEntity.ok(userDetailsService.save(newUser));
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteUser(@RequestBody IdRequest request) {
+        User user = userRepository.findUserById(request.getId());
+        if (user == null) {
+            LoggerFactory.getLogger(this.getClass()).error("USER WITH ID: " + request + " COULD NOT BE FOUND");
+            return new ResponseEntity<>("User could not be found!", HttpStatus.NOT_FOUND);
+        }
+
+        Cart cart = cartRepository.findCartById(user.getCart().getId());
+        if (cart == null) {
+            LoggerFactory.getLogger(this.getClass()).error("CART WITH ID: " + user.getCart().getId() + " COULD NOT BE FOUND");
+            return new ResponseEntity<>("Cart could not be found!", HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            userRepository.delete(user);
+            cartRepository.delete(cart);
+        } catch (Exception e) {
+            LogFactory.getLog(this.getClass()).error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+        LoggerFactory.getLogger(this.getClass()).info("USER DELETED: " + user);
+        return ResponseEntity.ok("User was deleted successfully!");
     }
 }
