@@ -19,12 +19,8 @@ public class Cart {
     @GeneratedValue
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "items_id")
+    @JoinColumn(name = "item_id")
     private List<Item> items = new ArrayList<>();
 }

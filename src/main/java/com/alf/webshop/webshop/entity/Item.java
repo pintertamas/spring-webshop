@@ -36,11 +36,9 @@ public class Item {
 
     @ToString.Exclude
     @OneToMany
-    @JoinColumn(name = "images_id")
     private List<Image> images = new ArrayList<>();
 
-    @ToString.Exclude
-    @ManyToMany
-    @JoinColumn(name = "cart_id")
-    private List<Cart> cart = new ArrayList<>();
+    public void addImage(Image newImage) {
+        this.images.add(newImage);
+    }
 }

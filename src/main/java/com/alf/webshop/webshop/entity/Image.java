@@ -15,12 +15,9 @@ import javax.persistence.*;
 @Table(name = "images")
 public class Image {
     @Id
+    @GeneratedValue
     @Column(name = "id", nullable = false)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "item_id")
-    private Item item;
 
     @Column(name = "url", nullable = false)
     private String url;

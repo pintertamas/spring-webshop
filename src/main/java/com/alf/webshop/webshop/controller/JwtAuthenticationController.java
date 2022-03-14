@@ -1,9 +1,11 @@
 package com.alf.webshop.webshop.controller;
 
 import com.alf.webshop.webshop.config.JwtTokenUtil;
+import com.alf.webshop.webshop.entity.Cart;
 import com.alf.webshop.webshop.model.JwtRequest;
 import com.alf.webshop.webshop.model.JwtResponse;
 import com.alf.webshop.webshop.entity.User;
+import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.UserRepository;
 import com.alf.webshop.webshop.service.JwtUserDetailsService;
 import org.apache.juli.logging.LogFactory;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 
 @RestController
 @CrossOrigin
@@ -33,6 +36,9 @@ public class JwtAuthenticationController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CartRepository cartRepository;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -72,6 +78,10 @@ public class JwtAuthenticationController {
             LoggerFactory.getLogger(this.getClass()).error("USER ALREADY EXISTS: " + user);
             return ResponseEntity.badRequest().body("User with this username already exists");
         }
+        Cart newCart = new Cart();
+        cartRepository.save(newCart);
+        newUser.setCart(newCart);
+
         LoggerFactory.getLogger(this.getClass()).info("USER CREATED: " + newUser);
         return ResponseEntity.ok(userDetailsService.save(newUser));
     }
