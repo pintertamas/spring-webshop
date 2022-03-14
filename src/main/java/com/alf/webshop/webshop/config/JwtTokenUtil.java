@@ -70,8 +70,6 @@ public class JwtTokenUtil implements Serializable {
             claims.put("isAdmin", true);
         } else if (roles.contains(new SimpleGrantedAuthority("ROLE_USER"))) {
             claims.put("isUser", true);
-        } else if (roles.contains(new SimpleGrantedAuthority("ROLE_TRANSPORTER"))) {
-            claims.put("isTransporter", true);
         }
 
         return doGenerateToken(claims, userDetails.getUsername());
@@ -96,7 +94,6 @@ public class JwtTokenUtil implements Serializable {
 
         Boolean isAdmin = claims.get("isAdmin", Boolean.class);
         Boolean isUser = claims.get("isUser", Boolean.class);
-        Boolean isTransporter = claims.get("isTransporter", Boolean.class);
 
         if (isAdmin != null && isAdmin) {
             role = new SimpleGrantedAuthority("ROLE_ADMIN");
@@ -104,10 +101,6 @@ public class JwtTokenUtil implements Serializable {
 
         if (isUser != null && isUser) {
             role = new SimpleGrantedAuthority("ROLE_USER");
-        }
-
-        if (isTransporter != null && isTransporter) {
-            role = new SimpleGrantedAuthority("ROLE_TRANSPORTER");
         }
 
         return role;

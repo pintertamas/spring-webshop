@@ -2,6 +2,7 @@ package com.alf.webshop.webshop.controller;
 
 import com.alf.webshop.webshop.config.JwtTokenUtil;
 import com.alf.webshop.webshop.entity.Item;
+import com.alf.webshop.webshop.model.ItemRequest;
 import com.alf.webshop.webshop.repository.ItemRepository;
 import org.apache.juli.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,9 @@ public class ItemController {
     JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/create")
-    public ResponseEntity<Item> createItem(@Valid @RequestBody Item _item) {
+    public ResponseEntity<Item> createItem(@Valid @RequestBody ItemRequest _itemRequest) {
+        Item _item = new Item();
+
         String token = JwtTokenUtil.getToken();
         _item.setCreator(jwtTokenUtil.getUserFromToken(token));
         try {
