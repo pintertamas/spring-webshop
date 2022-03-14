@@ -3,9 +3,9 @@
 Csapatnév:
 
 Csapattagok Neptun kóddal:
-- Minta Mókus (ABC123)
-- Minta Mókus (ABC123)
-- Minta Mókus (ABC123)
+- Bakonyi Klaudia Eszter (DJS7IG)
+- Nagy Dávid Martin (Y0VSU8)
+- Pintér Tamás (JY4D5L)
 
 Bemutató videó URL: 
 (Ugye minden olyan dolog szerepel benne a kiírásnak megfelelően, amire pontot szeretnétek kapni?)
@@ -46,6 +46,6 @@ A hivatalos teljes lista a HF feladatkiírásban található: https://www.aut.bm
 **A videó újrahasznosíthatósága**
 
 A házi feladat videót oktatási célokra újrahasznosíthatjuk? (Későbbi évfolyamoknak bemutatás, vágott anyagban felhasználás.)
-- [ ] Igen, a szerzők megjelölésével
+- [X] Igen, a szerzők megjelölésével
 - [ ] Igen, névtelenül
 - [ ] Nem
