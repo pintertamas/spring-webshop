@@ -11,6 +11,7 @@ import com.alf.webshop.webshop.service.JwtUserDetailsService;
 import org.apache.juli.logging.LogFactory;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +26,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 @RestController
@@ -56,8 +60,16 @@ public class JwtAuthenticationController {
 
         final String token = jwtTokenUtil.generateToken(userDetails);
         User user = jwtTokenUtil.getUserFromToken(token);
-        LogFactory.getLog(this.getClass()).info("NEW LOGIN: " + user.toString());
-
+        long millis = System.currentTimeMillis();
+        Date lastLogin = new Date(millis);
+        user.setLastLoginTime(lastLogin);
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            LogFactory.getLog(this.getClass()).error("ERROR AT LOGIN: " + user.getLastLoginTime() + " " + user);
+            return new ResponseEntity<>("Could not reach database", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        LogFactory.getLog(this.getClass()).info("NEW LOGIN: " + user.getLastLoginTime() + " " + user);
         return ResponseEntity.ok(new JwtResponse(token, user));
     }
 

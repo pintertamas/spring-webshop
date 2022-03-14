@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
-import java.util.UUID;
+import java.sql.Date;
 
 @Getter
 @Setter
@@ -53,4 +53,7 @@ public class User {
     @OneToOne
     @JoinColumn(name = "cart")
     private Cart cart;
+
+    @Column(name = "last_login")
+    private Date lastLoginTime;
 }
