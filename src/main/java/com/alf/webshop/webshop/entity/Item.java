@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -33,11 +34,13 @@ public class Item {
     @Column(name = "price", nullable = false)
     private double price;
 
+    @ToString.Exclude
     @OneToMany
-    @ToString.Exclude
-    private List<Image> images;
+    @JoinColumn(name = "images_id")
+    private List<Image> images = new ArrayList<>();
 
-    @ManyToMany
     @ToString.Exclude
-    private List<Cart> cart;
+    @ManyToMany
+    @JoinColumn(name = "cart_id")
+    private List<Cart> cart = new ArrayList<>();
 }

@@ -1,5 +1,6 @@
 package com.alf.webshop.webshop.config;
 
+import com.alf.webshop.webshop.filter.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,7 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/login", "/register", "/diary")
+                .antMatchers("/login", "/register")
                 .permitAll()
                 .antMatchers(
                         "/")

@@ -1,4 +1,4 @@
-package com.alf.webshop.webshop.config;
+package com.alf.webshop.webshop.filter;
 
 import java.io.IOException;
 
@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alf.webshop.webshop.config.JwtTokenUtil;
 import com.alf.webshop.webshop.service.JwtUserDetailsService;
 import io.jsonwebtoken.security.SignatureException;
 import org.apache.juli.logging.LogFactory;

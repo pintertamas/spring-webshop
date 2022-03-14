@@ -41,7 +41,6 @@ public class JwtUserDetailsService implements UserDetailsService {
     }
 
     public User save(User user) {
-        //user.setCart(new Cart(user));
         user.setPassword(bcryptEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }

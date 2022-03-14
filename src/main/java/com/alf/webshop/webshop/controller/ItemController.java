@@ -54,5 +54,4 @@ public class ItemController {
         Optional<Item> itemsData = itemRepository.findById(id);
         return itemsData.map(item -> new ResponseEntity<>(item, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-
 }
