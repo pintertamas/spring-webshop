@@ -1,7 +1,12 @@
 package com.alf.webshop.webshop.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@Getter
+@Setter
 @Entity(name = "Storage")
 @Table(name = "storage")
 public class Storage {
@@ -14,5 +19,8 @@ public class Storage {
     private Item item;
 
     @Column(name = "quantity")
-    public int quantity;
+    private int quantity;
+
+    @Column(name = "size")
+    private Size size;
 }

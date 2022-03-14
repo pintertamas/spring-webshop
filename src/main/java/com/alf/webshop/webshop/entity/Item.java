@@ -30,6 +30,12 @@ public class Item {
     @Column(name = "price", nullable = false)
     private double price;
 
+    @Column(name = "color", nullable = false)
+    private Color color;
+
+    @Column(name = "gender", nullable = false)
+    private Gender gender;
+
     @ToString.Exclude
     @OneToMany
     private List<Image> images = new ArrayList<>();

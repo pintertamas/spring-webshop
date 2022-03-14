@@ -3,10 +3,11 @@ package com.alf.webshop.webshop.controller;
 import com.alf.webshop.webshop.config.JwtTokenUtil;
 import com.alf.webshop.webshop.entity.Image;
 import com.alf.webshop.webshop.entity.Item;
-import com.alf.webshop.webshop.entity.User;
+import com.alf.webshop.webshop.entity.Storage;
 import com.alf.webshop.webshop.model.ItemRequest;
 import com.alf.webshop.webshop.repository.ImageRepository;
 import com.alf.webshop.webshop.repository.ItemRepository;
+import com.alf.webshop.webshop.repository.StorageRepository;
 import org.apache.juli.logging.LogFactory;
 import org.hibernate.TransientPropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,26 +29,35 @@ public class ItemController {
     ImageRepository imageRepository;
 
     @Autowired
+    StorageRepository storageRepository;
+
+    @Autowired
     JwtTokenUtil jwtTokenUtil;
 
     @PostMapping("/create")
     public ResponseEntity<Item> createItem(@Valid @RequestBody ItemRequest _itemRequest) {
-        Item _item = new Item();
-        String token = JwtTokenUtil.getToken();
-        _item.setName(_itemRequest.getName());
-        _item.setDescription(_itemRequest.getDescription());
-        _item.setPrice(_itemRequest.getPrice());
-        _item.setImages(new ArrayList<>());
+        Item item = new Item();
+        item.setName(_itemRequest.getName());
+        item.setColor(_itemRequest.getColor());
+        item.setGender(_itemRequest.getGender());
+        item.setDescription(_itemRequest.getDescription());
+        item.setPrice(_itemRequest.getPrice());
+        item.setImages(new ArrayList<>());
+        Storage storage = new Storage();
+        storage.setSize(_itemRequest.getStorage().getSize());
+        storage.setQuantity(_itemRequest.getStorage().getQuantity());
         try {
-            itemRepository.save(_item);
+            itemRepository.save(item);
+            storage.setItem(item);
+            storageRepository.save(storage);
             for (String imageUrl : _itemRequest.getImages()) {
                 Image image = new Image();
                 image.setUrl(imageUrl);
                 imageRepository.save(image);
-                _item.addImage(image);
+                item.addImage(image);
             }
-            itemRepository.save(_item);
-            return new ResponseEntity<>(_item, HttpStatus.OK);
+            itemRepository.save(item);
+            return new ResponseEntity<>(item, HttpStatus.OK);
         } catch (TransientPropertyValueException e) {
             LogFactory.getLog(this.getClass()).error(e.toString());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -1,5 +1,9 @@
 package com.alf.webshop.webshop.model;
 
+import com.alf.webshop.webshop.entity.Color;
+import com.alf.webshop.webshop.entity.Gender;
+import com.alf.webshop.webshop.entity.Storage;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,18 +11,13 @@ import java.util.ArrayList;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class ItemRequest {
-    Long creatorId;
     String name;
     String description;
     double price;
+    Color color;
+    Gender gender;
     ArrayList<String> images;
-
-    public ItemRequest(Long creatorId, String name, String description, double price, ArrayList<String> images) {
-        this.creatorId = creatorId;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.images = images;
-    }
+    Storage storage;
 }
