@@ -3,6 +3,7 @@ package com.alf.webshop.webshop.controller;
 import com.alf.webshop.webshop.config.JwtTokenUtil;
 import com.alf.webshop.webshop.entity.Cart;
 import com.alf.webshop.webshop.exception.CartNotFoundException;
+import com.alf.webshop.webshop.exception.UserAlreadyExistsException;
 import com.alf.webshop.webshop.exception.UserCannotDeleteThemselfException;
 import com.alf.webshop.webshop.exception.UserNotFoundException;
 import com.alf.webshop.webshop.model.IdRequest;
@@ -25,6 +26,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.auth.login.LoginException;
 import javax.validation.Valid;
 import java.sql.Date;
 
@@ -33,16 +35,7 @@ import java.sql.Date;
 public class JwtAuthenticationController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private CartRepository cartRepository;
-
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
     private JwtUserDetailsService userDetailsService;
@@ -52,20 +45,11 @@ public class JwtAuthenticationController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
-
-        final String token = jwtTokenUtil.generateToken(userDetails);
-        User user = jwtTokenUtil.getUserFromToken(token);
-        long millis = System.currentTimeMillis();
-        Date lastLogin = new Date(millis);
-        user.setLastLoginTime(lastLogin);
+        User user = userRepository.findUserByUsername(authenticationRequest.getUsername());
+        String token;
         try {
-            userRepository.save(user);
-        } catch (Exception e) {
+            token = userService.login(authenticationRequest);
+        } catch (LoginException e) {
             LogFactory.getLog(this.getClass()).error("ERROR AT LOGIN: " + user.getLastLoginTime() + " " + user);
             return new ResponseEntity<>("Could not reach database", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -73,26 +57,14 @@ public class JwtAuthenticationController {
         return ResponseEntity.ok(new JwtResponse(token, user));
     }
 
-    private void authenticate(String username, String password) throws Exception {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
-        }
-    }
-
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<?> saveUser(@Valid @RequestBody User newUser) {
-        User user = userRepository.findUserByUsername(newUser.getUsername());
-        if (user != null) {
-            LoggerFactory.getLogger(this.getClass()).error("USER ALREADY EXISTS: " + user);
-            return ResponseEntity.badRequest().body("User with this username already exists");
+    public ResponseEntity<?> register(@Valid @RequestBody User newUser) {
+        try {
+            userService.register(newUser);
+        } catch (UserAlreadyExistsException uaee) {
+            LoggerFactory.getLogger(this.getClass()).error("USER ALREADY EXISTS: " + uaee.getExistingUser());
+            return ResponseEntity.badRequest().body(uaee.getMessage());
         }
-        Cart newCart = new Cart();
-        cartRepository.save(newCart);
-        newUser.setCart(newCart);
 
         LoggerFactory.getLogger(this.getClass()).info("USER CREATED: " + newUser);
         return ResponseEntity.ok(userDetailsService.save(newUser));
@@ -100,26 +72,23 @@ public class JwtAuthenticationController {
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@RequestBody IdRequest request) {
-
-        User user = userRepository.findUserById(request.getId());
-        Cart cart = cartRepository.findCartById(user.getCart().getId());
         try {
             userService.deleteUser(request.getId());
         } catch (UserCannotDeleteThemselfException ucdt) {
-            LoggerFactory.getLogger(this.getClass()).error("USER CANNOT DELETE THEMSELF");
+            LoggerFactory.getLogger(this.getClass()).error("USER CANNOT DELETE THEMSELF: " + ucdt.getUser());
             return new ResponseEntity<>(ucdt.getMessage(), HttpStatus.NOT_FOUND);
         } catch (UserNotFoundException unfe) {
-            LoggerFactory.getLogger(this.getClass()).error("USER WITH ID: " + request + " COULD NOT BE FOUND");
+            LoggerFactory.getLogger(this.getClass()).error("USER WITH ID: " + unfe.getUserId() + " COULD NOT BE FOUND");
             return new ResponseEntity<>(unfe.getMessage(), HttpStatus.NOT_FOUND);
         } catch (CartNotFoundException cnfe) {
-            LoggerFactory.getLogger(this.getClass()).error("CART WITH ID: " + cart.getId() + " COULD NOT BE FOUND");
+            LoggerFactory.getLogger(this.getClass()).error("CART WITH ID: " + cnfe.getCart() + " COULD NOT BE FOUND");
             return new ResponseEntity<>(cnfe.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             LogFactory.getLog(this.getClass()).error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        LoggerFactory.getLogger(this.getClass()).info("USER DELETED: " + user);
+        LoggerFactory.getLogger(this.getClass()).info("USER DELETED");
         return ResponseEntity.ok("User was deleted successfully!");
     }
 }

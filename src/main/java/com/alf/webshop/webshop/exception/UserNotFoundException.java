@@ -1,7 +1,14 @@
 package com.alf.webshop.webshop.exception;
 
 public class UserNotFoundException extends Exception {
-    public UserNotFoundException() {
-        super("User could not be found!");
+    Long userId;
+
+    public UserNotFoundException(Long userId) {
+        super("User with id: " + userId + " could not be found!");
+        this.userId = userId;
+    }
+
+    public Long getUserId() {
+        return this.userId;
     }
 }
