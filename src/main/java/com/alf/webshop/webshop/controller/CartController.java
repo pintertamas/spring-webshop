@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/cart")
@@ -36,6 +37,18 @@ public class CartController {
             cartService.removeItem(request);
             LogFactory.getLog(this.getClass()).error("ITEM WITH ID: " + request.getId() + " DELETED");
             return new ResponseEntity<>("Item with id: " + request.getId() + " deleted", HttpStatus.OK);
+        } catch (Exception e) {
+            LogFactory.getLog(this.getClass()).error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<?> listCartItems() {
+        try {
+            List<Item> items = cartService.listCartItems();
+            LogFactory.getLog(this.getClass()).error("ITEMS LISTED");
+            return new ResponseEntity<>(items, HttpStatus.OK);
         } catch (Exception e) {
             LogFactory.getLog(this.getClass()).error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

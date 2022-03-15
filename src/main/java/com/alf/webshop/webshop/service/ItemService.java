@@ -4,24 +4,27 @@ import com.alf.webshop.webshop.config.JwtTokenUtil;
 import com.alf.webshop.webshop.entity.Image;
 import com.alf.webshop.webshop.entity.Item;
 import com.alf.webshop.webshop.entity.Storage;
+import com.alf.webshop.webshop.entity.User;
 import com.alf.webshop.webshop.exception.CouldNotCreateInstanceException;
 import com.alf.webshop.webshop.exception.EmptyListException;
 import com.alf.webshop.webshop.exception.ItemNotFoundException;
+import com.alf.webshop.webshop.model.IdRequest;
 import com.alf.webshop.webshop.model.ItemRequest;
 import com.alf.webshop.webshop.repository.ImageRepository;
 import com.alf.webshop.webshop.repository.ItemRepository;
 import com.alf.webshop.webshop.repository.StorageRepository;
+import com.alf.webshop.webshop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ItemService {
+
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     ItemRepository itemRepository;
@@ -63,8 +66,8 @@ public class ItemService {
         }
     }
 
-    public ArrayList<Item> listItems() throws EmptyListException {
-        ArrayList<Item> items = new ArrayList<>(itemRepository.findAll());
+    public List<Item> listItems() throws EmptyListException {
+        List<Item> items = itemRepository.findAll();
 
         if (items.isEmpty()) {
             throw new EmptyListException();
@@ -76,5 +79,17 @@ public class ItemService {
         Item item = itemRepository.findItemById(id);
         if (item == null) throw new ItemNotFoundException(id);
         return item;
+    }
+
+    public void deleteItem(IdRequest request) throws Exception {
+        Item item = itemRepository.findItemById(request.getId());
+
+
+        if (item == null) throw new ItemNotFoundException(request.getId());
+        try {
+            itemRepository.delete(item);
+        } catch (Exception e) {
+            throw new Exception("Something went wrong!");
+        }
     }
 }

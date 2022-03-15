@@ -5,15 +5,15 @@ import com.alf.webshop.webshop.entity.Cart;
 import com.alf.webshop.webshop.entity.Item;
 import com.alf.webshop.webshop.entity.User;
 import com.alf.webshop.webshop.exception.CartNotFoundException;
+import com.alf.webshop.webshop.exception.EmptyListException;
 import com.alf.webshop.webshop.exception.ItemNotFoundException;
 import com.alf.webshop.webshop.model.IdRequest;
 import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.ItemRepository;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CartService {
@@ -64,5 +64,16 @@ public class CartService {
         } catch (Exception e) {
             throw new Exception("Could not remove item!");
         }
+    }
+
+    public List<Item> listCartItems() throws EmptyListException {
+        String token = JwtTokenUtil.getToken();
+        User user = jwtTokenUtil.getUserFromToken(token);
+        List<Item> items = user.getCart().getItems();
+
+        if (items.isEmpty()) {
+            throw new EmptyListException();
+        }
+        return items;
     }
 }
