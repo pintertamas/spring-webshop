@@ -1,23 +1,14 @@
 package com.alf.webshop.webshop.controller;
 
-import com.alf.webshop.webshop.config.JwtTokenUtil;
-import com.alf.webshop.webshop.entity.Image;
 import com.alf.webshop.webshop.entity.Item;
-import com.alf.webshop.webshop.entity.Storage;
 import com.alf.webshop.webshop.exception.CouldNotCreateInstanceException;
 import com.alf.webshop.webshop.exception.EmptyListException;
 import com.alf.webshop.webshop.exception.ItemNotFoundException;
 import com.alf.webshop.webshop.model.ItemRequest;
-import com.alf.webshop.webshop.repository.ImageRepository;
-import com.alf.webshop.webshop.repository.ItemRepository;
-import com.alf.webshop.webshop.repository.StorageRepository;
 import com.alf.webshop.webshop.service.ItemService;
-import org.apache.juli.logging.LogFactory;
-import org.hibernate.TransientPropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
