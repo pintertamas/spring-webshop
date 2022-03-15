@@ -34,7 +34,7 @@ public class CartService {
         Item item = itemRepository.findItemById(request.getId());
 
         if (cart == null) {
-            throw new CartNotFoundException(user.getCart());
+            throw new CartNotFoundException(user.getCart().getId());
         } else if (item == null) {
             throw new ItemNotFoundException(request.getId());
         }
@@ -48,5 +48,21 @@ public class CartService {
         }
     }
 
+    public void removeItem(IdRequest request) throws Exception {
+        String token = JwtTokenUtil.getToken();
+        User user = jwtTokenUtil.getUserFromToken(token);
+        Cart cart = cartRepository.findCartById(user.getCart().getId());
+        Item item = itemRepository.findItemById(request.getId());
 
+        if (cart == null) throw new CartNotFoundException(user.getCart().getId());
+        if (item == null) throw new ItemNotFoundException(request.getId());
+
+        try {
+            cart.removeItem(item);
+            cartRepository.save(cart);
+            // TODO: probably should not write db on every item deletion
+        } catch (Exception e) {
+            throw new Exception("Could not remove item!");
+        }
+    }
 }

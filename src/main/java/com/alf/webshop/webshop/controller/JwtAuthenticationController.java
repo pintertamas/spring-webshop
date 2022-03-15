@@ -81,7 +81,7 @@ public class JwtAuthenticationController {
             LoggerFactory.getLogger(this.getClass()).error("USER WITH ID: " + unfe.getUserId() + " COULD NOT BE FOUND");
             return new ResponseEntity<>(unfe.getMessage(), HttpStatus.NOT_FOUND);
         } catch (CartNotFoundException cnfe) {
-            LoggerFactory.getLogger(this.getClass()).error("CART WITH ID: " + cnfe.getCart() + " COULD NOT BE FOUND");
+            LoggerFactory.getLogger(this.getClass()).error("CART COULD NOT BE FOUND");
             return new ResponseEntity<>(cnfe.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             LogFactory.getLog(this.getClass()).error(e.getMessage());

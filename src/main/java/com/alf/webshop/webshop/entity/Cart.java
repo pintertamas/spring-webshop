@@ -27,4 +27,8 @@ public class Cart {
     public void addItem(Item newItem) {
         this.items.add(newItem);
     }
+
+    public void removeItem(Item removableItem) {
+        this.items.remove(removableItem);
+    }
 }

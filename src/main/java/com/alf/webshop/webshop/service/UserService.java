@@ -67,7 +67,7 @@ public class UserService {
         if (user.getId().equals(id)) throw new UserCannotDeleteThemselfException(user);
 
         Cart cart = cartRepository.findCartById(user.getCart().getId());
-        if (cart == null) throw new CartNotFoundException(user.getCart());
+        if (cart == null) throw new CartNotFoundException(user.getCart().getId());
 
         try {
             userRepository.delete(user);

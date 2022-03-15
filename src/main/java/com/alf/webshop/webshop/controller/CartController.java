@@ -7,10 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -26,6 +23,19 @@ public class CartController {
         try {
             Item item = cartService.addItemToCart(request);
             return new ResponseEntity<>(item, HttpStatus.OK);
+        } catch (Exception e) {
+            LogFactory.getLog(this.getClass()).error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/remove")
+    public ResponseEntity<?> deleteItemFromCart(@Valid @RequestBody IdRequest request) {
+        try {
+            // removes one item from the current user's cart ba the ITEM ID!
+            cartService.removeItem(request);
+            LogFactory.getLog(this.getClass()).error("ITEM WITH ID: " + request.getId() + " DELETED");
+            return new ResponseEntity<>("Item with id: " + request.getId() + " deleted", HttpStatus.OK);
         } catch (Exception e) {
             LogFactory.getLog(this.getClass()).error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
