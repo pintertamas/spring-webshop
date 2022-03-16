@@ -84,9 +84,11 @@ public class ItemService {
     public void deleteItem(IdRequest request) throws Exception {
         Item item = itemRepository.findItemById(request.getId());
 
-
         if (item == null) throw new ItemNotFoundException(request.getId());
         try {
+
+
+
             itemRepository.delete(item);
         } catch (Exception e) {
             throw new Exception("Something went wrong!");

@@ -35,8 +35,8 @@ public class CartController {
         try {
             // removes one item from the current user's cart ba the ITEM ID!
             cartService.removeItem(request);
-            LogFactory.getLog(this.getClass()).error("ITEM WITH ID: " + request.getId() + " DELETED");
-            return new ResponseEntity<>("Item with id: " + request.getId() + " deleted", HttpStatus.OK);
+            LogFactory.getLog(this.getClass()).info("ITEM WITH ID: " + request.getId() + " DELETED FROM CART");
+            return new ResponseEntity<>("Item with id: " + request.getId() + " deleted from cart", HttpStatus.OK);
         } catch (Exception e) {
             LogFactory.getLog(this.getClass()).error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

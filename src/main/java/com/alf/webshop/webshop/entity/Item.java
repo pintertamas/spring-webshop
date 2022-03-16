@@ -37,7 +37,7 @@ public class Item {
     private Gender gender;
 
     @ToString.Exclude
-    @OneToMany
+    @OneToMany(cascade = CascadeType.REMOVE)
     private List<Image> images = new ArrayList<>();
 
     public void addImage(Image newImage) {
