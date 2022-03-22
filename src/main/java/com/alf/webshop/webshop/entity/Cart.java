@@ -24,7 +24,7 @@ public class Cart {
     private int total;
 
     @ToString.Exclude
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private List<Item> items = new ArrayList<>();
 

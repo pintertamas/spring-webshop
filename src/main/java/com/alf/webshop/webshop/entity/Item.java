@@ -70,7 +70,7 @@ public class Item {
     private List<Image> images = new ArrayList<>();
 
     @ToString.Exclude
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "items", cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "items")
     private List<Cart> carts = new ArrayList<>();
 
     public void addImage(Image newImage) {

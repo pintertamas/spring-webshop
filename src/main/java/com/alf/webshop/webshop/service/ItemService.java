@@ -10,6 +10,7 @@ import com.alf.webshop.webshop.exception.ItemNotFoundException;
 import com.alf.webshop.webshop.model.request.IdRequest;
 import com.alf.webshop.webshop.model.request.ItemRequest;
 import com.alf.webshop.webshop.repository.*;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
