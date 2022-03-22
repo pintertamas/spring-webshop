@@ -2,7 +2,6 @@ package com.alf.webshop.webshop.service;
 
 import com.alf.webshop.webshop.config.JwtTokenUtil;
 import com.alf.webshop.webshop.entity.Cart;
-import com.alf.webshop.webshop.entity.Role;
 import com.alf.webshop.webshop.entity.User;
 import com.alf.webshop.webshop.exception.CartNotFoundException;
 import com.alf.webshop.webshop.exception.UserAlreadyExistsException;
@@ -11,11 +10,7 @@ import com.alf.webshop.webshop.exception.UserNotFoundException;
 import com.alf.webshop.webshop.model.JwtRequest;
 import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.UserRepository;
-import org.apache.juli.logging.LogFactory;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -25,9 +20,6 @@ import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
 import java.sql.Date;
-import java.util.ArrayList;
-
-import static org.postgresql.gss.MakeGSS.authenticate;
 
 @Service
 public class UserService {
@@ -46,9 +38,6 @@ public class UserService {
 
     @Autowired
     private JwtUserDetailsService userDetailsService;
-
-    @Autowired
-    private UserService userService;
 
     private void authenticate(String username, String password) throws Exception {
         try {

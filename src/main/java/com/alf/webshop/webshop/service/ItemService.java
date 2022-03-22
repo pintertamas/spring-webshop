@@ -10,10 +10,7 @@ import com.alf.webshop.webshop.exception.EmptyListException;
 import com.alf.webshop.webshop.exception.ItemNotFoundException;
 import com.alf.webshop.webshop.model.IdRequest;
 import com.alf.webshop.webshop.model.ItemRequest;
-import com.alf.webshop.webshop.repository.ImageRepository;
-import com.alf.webshop.webshop.repository.ItemRepository;
-import com.alf.webshop.webshop.repository.StorageRepository;
-import com.alf.webshop.webshop.repository.UserRepository;
+import com.alf.webshop.webshop.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +31,9 @@ public class ItemService {
 
     @Autowired
     StorageRepository storageRepository;
+
+    @Autowired
+    private CartItemRepository cartItemRepository;
 
     @Autowired
     JwtTokenUtil jwtTokenUtil;
@@ -86,9 +86,7 @@ public class ItemService {
 
         if (item == null) throw new ItemNotFoundException(request.getId());
         try {
-
-
-
+            cartItemRepository.deleteAllByItemId(item.getId());
             itemRepository.delete(item);
         } catch (Exception e) {
             throw new Exception("Something went wrong!");

@@ -5,6 +5,7 @@ import java.util.List;
 import com.alf.webshop.webshop.entity.Cart;
 import com.alf.webshop.webshop.entity.Role;
 import com.alf.webshop.webshop.entity.User;
+import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +20,9 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    CartRepository cartRepository;
 
     @Autowired
     private PasswordEncoder bcryptEncoder;
@@ -42,6 +46,9 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     public User save(User user) {
         user.setPassword(bcryptEncoder.encode(user.getPassword()));
+        Cart cart = new Cart();
+        user.setCart(cart);
+        cartRepository.save(cart);
         return userRepository.save(user);
     }
 }
