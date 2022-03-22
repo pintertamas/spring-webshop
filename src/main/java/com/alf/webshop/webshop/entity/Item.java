@@ -42,12 +42,18 @@ public class Item {
     @Column(name = "SKU", nullable = false)
     private int sku;
 
+    @Column(name = "category")
+    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "discount_id")
+    private Discount discount;
+
     @ToString.Exclude
     @OneToMany(cascade = CascadeType.REMOVE)
     private List<Image> images = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "items")
     private List<Cart> carts;
 
     public void addImage(Image newImage) {

@@ -56,4 +56,7 @@ public class User {
 
     @Column(name = "last_login")
     private Date lastLoginTime;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
 }

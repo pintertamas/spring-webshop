@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Entity(name = "Cart")
-@Table(name = "cart")
+@Table(name = "carts")
 public class Cart {
     @Id
     @GeneratedValue
@@ -20,7 +20,8 @@ public class Cart {
     @Column(name = "total")
     private int total;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "carts")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
     private List<Item> items;
 
     public void addItem(Item item) {

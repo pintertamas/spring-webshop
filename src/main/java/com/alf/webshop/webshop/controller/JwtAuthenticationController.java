@@ -38,9 +38,6 @@ public class JwtAuthenticationController {
     private UserRepository userRepository;
 
     @Autowired
-    private JwtUserDetailsService userDetailsService;
-
-    @Autowired
     private UserService userService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -60,14 +57,13 @@ public class JwtAuthenticationController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<?> register(@Valid @RequestBody User newUser) {
         try {
-            userService.register(newUser);
+            User user = userService.register(newUser);
+            LoggerFactory.getLogger(this.getClass()).info("USER CREATED: " + newUser);
+            return ResponseEntity.ok(user);
         } catch (UserAlreadyExistsException uaee) {
             LoggerFactory.getLogger(this.getClass()).error("USER ALREADY EXISTS: " + uaee.getExistingUser());
             return ResponseEntity.badRequest().body(uaee.getMessage());
         }
-
-        LoggerFactory.getLogger(this.getClass()).info("USER CREATED: " + newUser);
-        return ResponseEntity.ok(userDetailsService.save(newUser));
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)

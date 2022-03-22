@@ -70,6 +70,8 @@ public class JwtTokenUtil implements Serializable {
             claims.put("isAdmin", true);
         } else if (roles.contains(new SimpleGrantedAuthority("ROLE_USER"))) {
             claims.put("isUser", true);
+        } else if (roles.contains(new SimpleGrantedAuthority("ROLE_DELETED"))) {
+            claims.put("isDeleted", true);
         }
 
         return doGenerateToken(claims, userDetails.getUsername());
@@ -87,13 +89,14 @@ public class JwtTokenUtil implements Serializable {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    public SimpleGrantedAuthority getRoleFromToken(String token) {
+    /*public SimpleGrantedAuthority getRoleFromToken(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token).getBody();
 
         SimpleGrantedAuthority role = null;
 
         Boolean isAdmin = claims.get("isAdmin", Boolean.class);
         Boolean isUser = claims.get("isUser", Boolean.class);
+        Boolean isDeleted = claims.get("isDeleted", Boolean.class);
 
         if (isAdmin != null && isAdmin) {
             role = new SimpleGrantedAuthority("ROLE_ADMIN");
@@ -103,8 +106,12 @@ public class JwtTokenUtil implements Serializable {
             role = new SimpleGrantedAuthority("ROLE_USER");
         }
 
+        if (isDeleted != null && isDeleted) {
+            role = new SimpleGrantedAuthority("ROLE_DELETED");
+        }
+
         return role;
-    }
+    }*/
 
     public static String getToken() {
         return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest().getHeader("Authorization").replace("Bearer ", "");
