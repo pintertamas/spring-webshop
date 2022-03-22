@@ -1,6 +1,5 @@
-package com.alf.webshop.webshop.model;
+package com.alf.webshop.webshop.model.response;
 
-import com.alf.webshop.webshop.entity.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -21,5 +20,5 @@ public class JwtResponse implements Serializable {
     private final String jwtToken;
 
     @NotNull(message = "User should not be null")
-    private final User user;
+    private final UserResponse user;
 }

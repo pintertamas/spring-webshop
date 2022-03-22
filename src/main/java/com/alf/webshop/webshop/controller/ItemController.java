@@ -4,10 +4,12 @@ import com.alf.webshop.webshop.entity.Item;
 import com.alf.webshop.webshop.exception.CouldNotCreateInstanceException;
 import com.alf.webshop.webshop.exception.EmptyListException;
 import com.alf.webshop.webshop.exception.ItemNotFoundException;
-import com.alf.webshop.webshop.model.IdRequest;
-import com.alf.webshop.webshop.model.ItemRequest;
+import com.alf.webshop.webshop.model.request.IdRequest;
+import com.alf.webshop.webshop.model.request.ItemRequest;
+import com.alf.webshop.webshop.model.response.ItemResponse;
 import com.alf.webshop.webshop.repository.ItemRepository;
 import com.alf.webshop.webshop.service.ItemService;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +29,11 @@ public class ItemController {
     ItemRepository itemRepository;
 
     @PostMapping("/create")
-    public ResponseEntity<Item> createItem(@Valid @RequestBody ItemRequest itemRequest) {
+    public ResponseEntity<?> createItem(@Valid @RequestBody ItemRequest itemRequest) {
         try {
             Item newItem = itemService.createItem(itemRequest);
-            return new ResponseEntity<>(newItem, HttpStatus.OK);
+            LogFactory.getLog(this.getClass()).info("ITEM CREATED: " + itemRequest);
+            return new ResponseEntity<>(new ItemResponse(newItem), HttpStatus.OK);
         } catch (CouldNotCreateInstanceException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -40,17 +43,19 @@ public class ItemController {
     public ResponseEntity<?> getAllItems() {
         try {
             List<Item> items = itemService.listItems();
-            return new ResponseEntity<>(items, HttpStatus.OK);
+            LogFactory.getLog(this.getClass()).info(items.size() + " ITEMS LISTED");
+            return new ResponseEntity<>(ItemResponse.fromItemList(items), HttpStatus.OK);
         } catch (EmptyListException ele) {
             return new ResponseEntity<>(ele.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping("")
-    public ResponseEntity<Item> getItemById(@RequestParam Long id) {
+    @GetMapping("{id}")
+    public ResponseEntity<?> getItemById(@PathVariable Long id) {
         try {
             Item item = itemService.getItemById(id);
-            return new ResponseEntity<>(item, HttpStatus.OK);
+            LogFactory.getLog(this.getClass()).info("ITEM BY ID: " + item);
+            return new ResponseEntity<>(new ItemResponse(item), HttpStatus.OK);
         } catch (ItemNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -60,7 +65,8 @@ public class ItemController {
     public ResponseEntity<?> deleteItem(@RequestBody IdRequest request) {
         try {
             itemService.deleteItem(request);
-            return new ResponseEntity<>("ITEM DELETED", HttpStatus.OK);
+            LogFactory.getLog(this.getClass()).info("ITEM WITH ID: " + request.getId() + " DELETED");
+            return new ResponseEntity<>("Item with ID: " + request.getId() + " deleted", HttpStatus.OK);
         } catch (ItemNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {

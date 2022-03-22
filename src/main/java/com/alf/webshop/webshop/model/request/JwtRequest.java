@@ -1,4 +1,4 @@
-package com.alf.webshop.webshop.model;
+package com.alf.webshop.webshop.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

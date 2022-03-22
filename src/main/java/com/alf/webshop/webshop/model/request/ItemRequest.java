@@ -1,4 +1,4 @@
-package com.alf.webshop.webshop.model;
+package com.alf.webshop.webshop.model.request;
 
 import com.alf.webshop.webshop.entity.Category;
 import com.alf.webshop.webshop.entity.Color;

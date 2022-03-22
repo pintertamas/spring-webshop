@@ -7,14 +7,13 @@ import com.alf.webshop.webshop.entity.User;
 import com.alf.webshop.webshop.exception.CartNotFoundException;
 import com.alf.webshop.webshop.exception.EmptyListException;
 import com.alf.webshop.webshop.exception.ItemNotFoundException;
-import com.alf.webshop.webshop.model.IdRequest;
+import com.alf.webshop.webshop.model.request.IdRequest;
 import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.ItemRepository;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,7 +28,7 @@ public class CartService {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    public Item addItemToCart(IdRequest request) throws Exception {
+    public void addItemToCart(IdRequest request) throws Exception {
         String token = JwtTokenUtil.getToken();
         User user = jwtTokenUtil.getUserFromToken(token);
         Cart cart = cartRepository.findCartById(user.getCart().getId());
@@ -45,9 +44,8 @@ public class CartService {
             cart.addItem(item);
             cartRepository.save(cart);
             item.addToCart(cart);
+            cart.setTotal(cart.getTotal() + 1);
             itemRepository.save(item);
-
-            return item;
         } catch (Exception e) {
             LogFactory.getLog(this.getClass()).error(e.getMessage());
             throw new Exception();

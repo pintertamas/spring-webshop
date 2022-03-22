@@ -1,34 +1,25 @@
 package com.alf.webshop.webshop.controller;
 
-import com.alf.webshop.webshop.config.JwtTokenUtil;
-import com.alf.webshop.webshop.entity.Cart;
 import com.alf.webshop.webshop.exception.CartNotFoundException;
 import com.alf.webshop.webshop.exception.UserAlreadyExistsException;
 import com.alf.webshop.webshop.exception.UserCannotDeleteThemselfException;
 import com.alf.webshop.webshop.exception.UserNotFoundException;
-import com.alf.webshop.webshop.model.IdRequest;
-import com.alf.webshop.webshop.model.JwtRequest;
-import com.alf.webshop.webshop.model.JwtResponse;
+import com.alf.webshop.webshop.model.request.IdRequest;
+import com.alf.webshop.webshop.model.request.JwtRequest;
+import com.alf.webshop.webshop.model.response.JwtResponse;
 import com.alf.webshop.webshop.entity.User;
-import com.alf.webshop.webshop.repository.CartRepository;
+import com.alf.webshop.webshop.model.response.UserResponse;
 import com.alf.webshop.webshop.repository.UserRepository;
-import com.alf.webshop.webshop.service.JwtUserDetailsService;
 import com.alf.webshop.webshop.service.UserService;
 import org.apache.juli.logging.LogFactory;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.LoginException;
 import javax.validation.Valid;
-import java.sql.Date;
 
 @RestController
 @CrossOrigin
@@ -51,7 +42,7 @@ public class JwtAuthenticationController {
             return new ResponseEntity<>("Could not reach database", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         LogFactory.getLog(this.getClass()).info("NEW LOGIN: " + user.getLastLoginTime() + " " + user);
-        return ResponseEntity.ok(new JwtResponse(token, user));
+        return ResponseEntity.ok(new JwtResponse(token, new UserResponse(user)));
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -59,7 +50,7 @@ public class JwtAuthenticationController {
         try {
             User user = userService.register(newUser);
             LoggerFactory.getLogger(this.getClass()).info("USER CREATED: " + newUser);
-            return ResponseEntity.ok(user);
+            return ResponseEntity.ok(new UserResponse(user));
         } catch (UserAlreadyExistsException uaee) {
             LoggerFactory.getLogger(this.getClass()).error("USER ALREADY EXISTS: " + uaee.getExistingUser());
             return ResponseEntity.badRequest().body(uaee.getMessage());
@@ -85,6 +76,6 @@ public class JwtAuthenticationController {
         }
 
         LoggerFactory.getLogger(this.getClass()).info("USER DELETED");
-        return ResponseEntity.ok("User was deleted successfully!");
+        return ResponseEntity.ok("User with " + request.getId() + " was deleted successfully!");
     }
 }

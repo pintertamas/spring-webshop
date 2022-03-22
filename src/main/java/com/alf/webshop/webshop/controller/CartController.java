@@ -1,7 +1,8 @@
 package com.alf.webshop.webshop.controller;
 
 import com.alf.webshop.webshop.entity.Item;
-import com.alf.webshop.webshop.model.IdRequest;
+import com.alf.webshop.webshop.model.request.IdRequest;
+import com.alf.webshop.webshop.model.response.ItemResponse;
 import com.alf.webshop.webshop.service.CartService;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ public class CartController {
     @PostMapping("/add")
     public ResponseEntity<?> addItemToCart(@Valid @RequestBody IdRequest request) {
         try {
-            Item item = cartService.addItemToCart(request);
-            return new ResponseEntity<>(item, HttpStatus.OK);
+            cartService.addItemToCart(request);
+            return new ResponseEntity<>("Item with ID: " + request.getId() + " was successfully added to your cart!", HttpStatus.OK);
         } catch (Exception e) {
             LogFactory.getLog(this.getClass()).error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -47,8 +48,8 @@ public class CartController {
     public ResponseEntity<?> listCartItems() {
         try {
             List<Item> items = cartService.listCartItems();
-            LogFactory.getLog(this.getClass()).error("ITEMS LISTED");
-            return new ResponseEntity<>(items, HttpStatus.OK);
+            LogFactory.getLog(this.getClass()).info("ITEMS LISTED");
+            return new ResponseEntity<>(ItemResponse.fromItemList(items), HttpStatus.OK);
         } catch (Exception e) {
             LogFactory.getLog(this.getClass()).error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

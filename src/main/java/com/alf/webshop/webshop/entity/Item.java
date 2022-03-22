@@ -1,5 +1,6 @@
 package com.alf.webshop.webshop.entity;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +16,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @Entity(name = "Item")
 @Table(name = "items")
@@ -69,8 +69,9 @@ public class Item {
     @OneToMany(cascade = CascadeType.REMOVE)
     private List<Image> images = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "items")
-    private List<Cart> carts;
+    @ToString.Exclude
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "items", cascade = CascadeType.ALL)
+    private List<Cart> carts = new ArrayList<>();
 
     public void addImage(Image newImage) {
         this.images.add(newImage);

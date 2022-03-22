@@ -50,6 +50,7 @@ public class User {
     @Column(name = "telephone")
     private String telephone;
 
+    @ToString.Exclude
     @OneToOne
     @JoinColumn(name = "cart")
     private Cart cart;
