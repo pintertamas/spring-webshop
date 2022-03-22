@@ -2,7 +2,7 @@ package com.alf.webshop.webshop.model;
 
 import com.alf.webshop.webshop.entity.Color;
 import com.alf.webshop.webshop.entity.Gender;
-import com.alf.webshop.webshop.entity.Storage;
+import com.alf.webshop.webshop.entity.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,5 +19,6 @@ public class ItemRequest {
     Color color;
     Gender gender;
     ArrayList<String> images;
-    Storage storage;
+    Size size;
+    int quantity;
 }

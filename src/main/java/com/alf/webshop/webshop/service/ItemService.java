@@ -1,10 +1,9 @@
 package com.alf.webshop.webshop.service;
 
 import com.alf.webshop.webshop.config.JwtTokenUtil;
+import com.alf.webshop.webshop.entity.Cart;
 import com.alf.webshop.webshop.entity.Image;
 import com.alf.webshop.webshop.entity.Item;
-import com.alf.webshop.webshop.entity.Storage;
-import com.alf.webshop.webshop.entity.User;
 import com.alf.webshop.webshop.exception.CouldNotCreateInstanceException;
 import com.alf.webshop.webshop.exception.EmptyListException;
 import com.alf.webshop.webshop.exception.ItemNotFoundException;
@@ -14,6 +13,7 @@ import com.alf.webshop.webshop.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,13 +27,10 @@ public class ItemService {
     ItemRepository itemRepository;
 
     @Autowired
+    CartRepository cartRepository;
+
+    @Autowired
     ImageRepository imageRepository;
-
-    @Autowired
-    StorageRepository storageRepository;
-
-    @Autowired
-    private CartItemRepository cartItemRepository;
 
     @Autowired
     JwtTokenUtil jwtTokenUtil;
@@ -46,13 +43,10 @@ public class ItemService {
         item.setDescription(itemRequest.getDescription());
         item.setPrice(itemRequest.getPrice());
         item.setImages(new ArrayList<>());
-        Storage storage = new Storage();
-        storage.setSize(itemRequest.getStorage().getSize());
-        storage.setQuantity(itemRequest.getStorage().getQuantity());
+        item.setSize(itemRequest.getSize());
+        item.setSku(itemRequest.getQuantity());
         try {
             itemRepository.save(item);
-            storage.setItem(item);
-            storageRepository.save(storage);
             for (String imageUrl : itemRequest.getImages()) {
                 Image image = new Image();
                 image.setUrl(imageUrl);
@@ -81,15 +75,20 @@ public class ItemService {
         return item;
     }
 
+    @Transactional
     public void deleteItem(IdRequest request) throws Exception {
         Item item = itemRepository.findItemById(request.getId());
 
         if (item == null) throw new ItemNotFoundException(request.getId());
         try {
-            cartItemRepository.deleteAllByItemId(item.getId());
+            List<Cart> carts = item.getCarts();
+            for (Cart cart : carts) {
+                cart.getItems().remove(item);
+                cartRepository.save(cart);
+            }
             itemRepository.delete(item);
         } catch (Exception e) {
-            throw new Exception("Something went wrong!");
+            throw new Exception("Something went wrong! " + e.getMessage());
         }
     }
 }

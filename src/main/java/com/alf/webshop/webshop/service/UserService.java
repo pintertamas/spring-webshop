@@ -90,8 +90,5 @@ public class UserService {
         if (user != null) {
             throw new UserAlreadyExistsException(user);
         }
-        Cart newCart = new Cart();
-        cartRepository.save(newCart);
-        newUser.setCart(newCart);
     }
 }

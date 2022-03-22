@@ -36,11 +36,25 @@ public class Item {
     @Column(name = "gender", nullable = false)
     private Gender gender;
 
+    @Column(name = "size", nullable = false)
+    private Size size;
+
+    @Column(name = "SKU", nullable = false)
+    private int sku;
+
     @ToString.Exclude
     @OneToMany(cascade = CascadeType.REMOVE)
     private List<Image> images = new ArrayList<>();
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id")
+    private List<Cart> carts;
+
     public void addImage(Image newImage) {
         this.images.add(newImage);
+    }
+
+    public void addToCart(Cart cart) {
+        this.carts.add(cart);
     }
 }
