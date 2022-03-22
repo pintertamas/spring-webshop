@@ -44,7 +44,8 @@ public class ItemService {
         item.setPrice(itemRequest.getPrice());
         item.setImages(new ArrayList<>());
         item.setSize(itemRequest.getSize());
-        item.setSku(itemRequest.getQuantity());
+        item.setSku(itemRequest.getSku());
+        item.setCategory(itemRequest.getCategory());
         try {
             itemRepository.save(item);
             for (String imageUrl : itemRequest.getImages()) {

@@ -1,5 +1,6 @@
 package com.alf.webshop.webshop.model;
 
+import com.alf.webshop.webshop.entity.Category;
 import com.alf.webshop.webshop.entity.Color;
 import com.alf.webshop.webshop.entity.Gender;
 import com.alf.webshop.webshop.entity.Size;
@@ -18,7 +19,8 @@ public class ItemRequest {
     double price;
     Color color;
     Gender gender;
+    Category category;
     ArrayList<String> images;
     Size size;
-    int quantity;
+    int sku;
 }
