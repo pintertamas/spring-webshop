@@ -63,10 +63,8 @@ public class CartService {
         if (item == null) throw new ItemNotFoundException(request.getId());
 
         try {
-            cart.getItems().removeIf(deletableItem -> deletableItem.getId().equals(item.getId()));
+            cart.getItems().remove(item);
             cartRepository.save(cart);
-
-            // TODO: probably should not write db on every item deletion
         } catch (Exception e) {
             throw new Exception("Could not remove item!");
         }
