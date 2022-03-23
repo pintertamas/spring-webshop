@@ -4,6 +4,7 @@ import com.alf.webshop.webshop.config.JwtTokenUtil;
 import com.alf.webshop.webshop.entity.Role;
 import com.alf.webshop.webshop.exception.*;
 import com.alf.webshop.webshop.model.request.JwtRequest;
+import com.alf.webshop.webshop.model.request.PasswordRequest;
 import com.alf.webshop.webshop.model.request.UserEditRequest;
 import com.alf.webshop.webshop.model.response.JwtResponse;
 import com.alf.webshop.webshop.entity.User;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.naming.AuthenticationException;
 import javax.security.auth.login.LoginException;
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 
 @RestController
 @CrossOrigin
@@ -63,27 +65,37 @@ public class UserController {
     @RequestMapping(value = "/user/edit/{id}", method = RequestMethod.PUT)
     public ResponseEntity<?> editUser(@Valid @PathVariable Long id, @RequestBody UserEditRequest editedUser) {
         try {
-            String token = JwtTokenUtil.getToken();
-            User currentUser = jwtTokenUtil.getUserFromToken(token);
-            User user = userRepository.findUserById(id);
-            if (!currentUser.getRole().equals(Role.ADMIN)) {
-                if (!currentUser.equals(user)) {
-                    throw new AuthenticationException("This user cannot edit the user with the given userId");
-                }
-            }
-            user = userService.editUserData(id, editedUser);
+            User user = userService.validateUserId(id);
+            user = userService.editUserData(user, editedUser);
 
             LoggerFactory.getLogger(this.getClass()).info("USER EDITED: " + user);
             return ResponseEntity.ok(new UserResponse(user));
         } catch (AuthenticationException ae) {
             LoggerFactory.getLogger(this.getClass()).error("USER CANNOT EDIT USER WITH ID: " + id);
-            return ResponseEntity.badRequest().body(ae.getMessage());
+            return new ResponseEntity<>(ae.getMessage(), HttpStatus.FORBIDDEN);
         } catch (UserNotFoundException unfe) {
             LoggerFactory.getLogger(this.getClass()).error("USER WITH ID: " + unfe.getUserId() + " COULD NOT BE FOUND");
             return new ResponseEntity<>(unfe.getMessage(), HttpStatus.NOT_FOUND);
         } catch (UsernameIsTakenException uite) {
             LoggerFactory.getLogger(this.getClass()).error("USERNAME (" + editedUser.getUsername() + " IS ALREADY TAKEN");
-            return new ResponseEntity<>(uite.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(uite.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+    @RequestMapping(value = "/user/edit-password/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<?> editUserPassword(@PathVariable Long id, @Valid @RequestBody PasswordRequest passwordRequest) {
+        try {
+            User user = userService.validateUserId(id);
+            userService.editPassword(user, passwordRequest);
+
+            LoggerFactory.getLogger(this.getClass()).info("USER PASSWORD CHANGED: *********");
+            return ResponseEntity.ok("Password updated");
+        } catch (UserNotFoundException unfe) {
+            LoggerFactory.getLogger(this.getClass()).error("USER COULD NOT BE FOUND");
+            return new ResponseEntity<>(unfe.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (AuthenticationException ae) {
+            LoggerFactory.getLogger(this.getClass()).error("AUTHENTICATION EXCEPTION");
+            return new ResponseEntity<>(ae.getMessage(), HttpStatus.FORBIDDEN);
         }
     }
 
@@ -107,5 +119,35 @@ public class UserController {
 
         LoggerFactory.getLogger(this.getClass()).info("USER DELETED");
         return ResponseEntity.ok("User with " + id + " was deleted successfully!");
+    }
+
+    @RequestMapping(value = "/add-as-admin/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<?> addAdminRole(@PathVariable Long id) {
+        try {
+            userService.addAsAdmin(id);
+            LoggerFactory.getLogger(this.getClass()).error("USER NOT FOUND");
+            return new ResponseEntity<>("User role changed to ADMIN: " + id, HttpStatus.OK);
+        } catch (UserNotFoundException unfe) {
+            LoggerFactory.getLogger(this.getClass()).error("USER NOT FOUND");
+            return new ResponseEntity<>(unfe.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            LoggerFactory.getLogger(this.getClass()).error("USER CANNOT BE ADDED AS ADMIN DUE TO AN ERROR");
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/add-as-user/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<?> addUserRole(@PathVariable Long id) {
+        try {
+            userService.addAsUser(id);
+            LoggerFactory.getLogger(this.getClass()).error("USER NOT FOUND");
+            return new ResponseEntity<>("User role changed to USER: " + id, HttpStatus.OK);
+        } catch (UserNotFoundException unfe) {
+            LoggerFactory.getLogger(this.getClass()).error("USER NOT FOUND");
+            return new ResponseEntity<>(unfe.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            LoggerFactory.getLogger(this.getClass()).error("USER CANNOT BE ADDED AS ADMIN DUE TO AN ERROR");
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

@@ -9,6 +9,7 @@ import com.alf.webshop.webshop.exception.UserCannotDeleteThemselfException;
 import com.alf.webshop.webshop.exception.UserNotFoundException;
 import com.alf.webshop.webshop.exception.UsernameIsTakenException;
 import com.alf.webshop.webshop.model.request.JwtRequest;
+import com.alf.webshop.webshop.model.request.PasswordRequest;
 import com.alf.webshop.webshop.model.request.UserEditRequest;
 import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.UserRepository;
@@ -21,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.naming.AuthenticationException;
 import javax.security.auth.login.LoginException;
 import java.sql.Date;
 
@@ -79,8 +81,7 @@ public class UserService {
     public String login(JwtRequest authenticationRequest) throws Exception {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 
         final String token = jwtTokenUtil.generateToken(userDetails);
         User user = jwtTokenUtil.getUserFromToken(token);
@@ -99,10 +100,11 @@ public class UserService {
         if (userRepository.findUserByUsername(newUser.getUsername()) != null) {
             throw new UserAlreadyExistsException(newUser);
         }
+        newUser.setRole(Role.USER);
         Cart cart = new Cart();
         newUser.setCart(cart);
-        newUser.setDeleted(false);
         cartRepository.save(cart);
+        newUser.setDeleted(false);
         newUser.setPassword(bcryptEncoder.encode(newUser.getPassword()));
         userRepository.save(newUser);
 
@@ -113,10 +115,21 @@ public class UserService {
         return newUser;
     }
 
-    public User editUserData(Long id, UserEditRequest userEditRequest) throws UserNotFoundException, UsernameIsTakenException {
+    public User validateUserId(Long id) throws AuthenticationException, UserNotFoundException {
+        String token = JwtTokenUtil.getToken();
+        User currentUser = jwtTokenUtil.getUserFromToken(token);
         User user = userRepository.findUserById(id);
         if (user == null) throw new UserNotFoundException(id);
 
+        if (!currentUser.getRole().equals(Role.ADMIN)) {
+            if (!currentUser.equals(user)) {
+                throw new AuthenticationException("Authentication exception");
+            }
+        }
+        return user;
+    }
+
+    public User editUserData(User user, UserEditRequest userEditRequest) throws UserNotFoundException, UsernameIsTakenException {
         if (userEditRequest.getUsername() != null) {
             User userWithSameUsername = userRepository.findUserByUsername(userEditRequest.getUsername());
             if (userWithSameUsername != null) throw new UsernameIsTakenException(userEditRequest.getUsername());
@@ -125,5 +138,31 @@ public class UserService {
         if (userEditRequest.getEmail() != null) user.setEmail(userEditRequest.getEmail());
         if (userEditRequest.getTelephone() != null) user.setTelephone(userEditRequest.getTelephone());
         return userRepository.save(user);
+    }
+
+    public void editPassword(User user, PasswordRequest passwordRequest) {
+        user.setPassword(passwordRequest.getPassword());
+        user.setPassword(bcryptEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+    }
+
+    public void addAsAdmin(Long id) throws UserNotFoundException {
+        User user = userRepository.findUserById(id);
+        if (user == null) throw new UserNotFoundException(id);
+        if (user.getRole().equals(Role.DELETED)) {
+            user.setDeleted(false);
+        }
+        user.setRole(Role.ADMIN);
+        userRepository.save(user);
+    }
+
+    public void addAsUser(Long id) throws UserNotFoundException {
+        User user = userRepository.findUserById(id);
+        if (user == null) throw new UserNotFoundException(id);
+        if (user.getRole().equals(Role.DELETED)) {
+            user.setDeleted(false);
+        }
+        user.setRole(Role.USER);
+        userRepository.save(user);
     }
 }

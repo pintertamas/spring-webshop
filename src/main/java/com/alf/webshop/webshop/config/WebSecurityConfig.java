@@ -53,7 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login", "/register")
                 .permitAll()
                 .antMatchers(
-                        "/cart/add/{\\d+}", "/cart/remove/{\\d+}", "/cart/list", "/item/list", "/item/{\\d+}")
+                        "/cart/add/{\\d+}", "/cart/remove/{\\d+}", "/cart/list", "/item/list", "/item/{\\d+}", "/user/edit/{\\d+}")
                 .hasAnyRole("ADMIN", "USER")
                 .anyRequest().hasRole("ADMIN")
                 .and()

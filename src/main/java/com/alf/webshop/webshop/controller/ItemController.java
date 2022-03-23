@@ -4,7 +4,6 @@ import com.alf.webshop.webshop.entity.Item;
 import com.alf.webshop.webshop.exception.CouldNotCreateInstanceException;
 import com.alf.webshop.webshop.exception.EmptyListException;
 import com.alf.webshop.webshop.exception.ItemNotFoundException;
-import com.alf.webshop.webshop.model.request.IdRequest;
 import com.alf.webshop.webshop.model.request.ItemRequest;
 import com.alf.webshop.webshop.model.response.ItemResponse;
 import com.alf.webshop.webshop.repository.ItemRepository;
