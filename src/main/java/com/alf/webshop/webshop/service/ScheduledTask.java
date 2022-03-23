@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.alf.webshop.webshop.email.CustomMailSender;
+import com.alf.webshop.webshop.entity.Role;
 import com.alf.webshop.webshop.entity.User;
 import com.alf.webshop.webshop.repository.UserRepository;
 import org.slf4j.Logger;
@@ -21,6 +23,9 @@ public class ScheduledTask {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private CustomMailSender customMailSender;
+
     private static final Logger log = LoggerFactory.getLogger(ScheduledTask.class);
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -31,16 +36,26 @@ public class ScheduledTask {
     }
 
     @Scheduled(fixedRate = 864000000)
-    public void deleteInactiveUsers() {
-        log.info("Deleting inactive users...");
+    public void handleInactiveUsers() {
         long millis = System.currentTimeMillis();
         int tenDaysInMillis = 864000000;
         java.sql.Date tenDaysBeforeToday = new java.sql.Date(millis - tenDaysInMillis);
-        ArrayList<User> inactiveUsers = userRepository.findUsersByLastLoginTimeBefore(tenDaysBeforeToday);
+        int eightDaysInMillis = 691200000;
+        java.sql.Date eightDaysBeforeToday = new java.sql.Date(millis - eightDaysInMillis);
+        ArrayList<User> inactiveUsers = userRepository.findUsersByLastLoginTimeBeforeAndRoleIsNot(tenDaysBeforeToday, Role.DELETED);
+        ArrayList<User> notifiableUsers = userRepository.findUsersByLastLoginTimeBeforeAndRoleIsNot(eightDaysBeforeToday, Role.DELETED);
 
+        log.info("Deleting inactive users...");
         for (User inactiveUser : inactiveUsers) {
             log.info("inactive user detected: " + inactiveUser);
             userService.disableUser(inactiveUser);
         }
+
+        log.info("Notifying inactive users...");
+        for (User notifiableUser : notifiableUsers) {
+            log.info("notifiable user detected: " + notifiableUser);
+            customMailSender.sendEmailWithAttachment(notifiableUser.getEmail());
+        }
+
     }
 }
