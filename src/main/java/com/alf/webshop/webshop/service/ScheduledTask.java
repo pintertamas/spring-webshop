@@ -31,16 +31,16 @@ public class ScheduledTask {
     }
 
     @Scheduled(fixedRate = 864000000)
-    public void deleteInactiveUsers() throws Exception {
+    public void deleteInactiveUsers() {
         log.info("Deleting inactive users...");
         long millis = System.currentTimeMillis();
         int tenDaysInMillis = 864000000;
         java.sql.Date tenDaysBeforeToday = new java.sql.Date(millis - tenDaysInMillis);
         ArrayList<User> inactiveUsers = userRepository.findUsersByLastLoginTimeBefore(tenDaysBeforeToday);
 
-        for (int i = 0; i < inactiveUsers.size(); i++) {
-            log.info("inactive user detected: " + inactiveUsers.get(i));
-            userService.deleteUser(inactiveUsers.get(i).getId());
+        for (User inactiveUser : inactiveUsers) {
+            log.info("inactive user detected: " + inactiveUser);
+            userService.disableUser(inactiveUser);
         }
     }
 }

@@ -7,7 +7,9 @@ import com.alf.webshop.webshop.entity.User;
 import com.alf.webshop.webshop.exception.UserAlreadyExistsException;
 import com.alf.webshop.webshop.exception.UserCannotDeleteThemselfException;
 import com.alf.webshop.webshop.exception.UserNotFoundException;
+import com.alf.webshop.webshop.exception.UsernameIsTakenException;
 import com.alf.webshop.webshop.model.request.JwtRequest;
+import com.alf.webshop.webshop.model.request.UserEditRequest;
 import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,12 @@ public class UserService {
         }
     }
 
+    public void disableUser(User user) {
+        user.setDeleted(true);
+        user.setRole(Role.DELETED);
+        userRepository.save(user);
+    }
+
     public void deleteUser(Long id) throws Exception {
         User user = userRepository.findUserById(id);
         String token = JwtTokenUtil.getToken();
@@ -62,9 +70,7 @@ public class UserService {
         if (currentUser.getId().equals(id)) throw new UserCannotDeleteThemselfException(user);
 
         try {
-            user.setDeleted(true);
-            user.setRole(Role.DELETED);
-            userRepository.save(user);
+            disableUser(user);
         } catch (Exception e) {
             throw new Exception("Something went wrong");
         }
@@ -105,5 +111,19 @@ public class UserService {
             newUser.setDeleted(true);
         }
         return newUser;
+    }
+
+    public User editUserData(Long id, UserEditRequest userEditRequest) throws UserNotFoundException, UsernameIsTakenException {
+        User user = userRepository.findUserById(id);
+        if (user == null) throw new UserNotFoundException(id);
+
+        if (userEditRequest.getUsername() != null) {
+            User userWithSameUsername = userRepository.findUserByUsername(userEditRequest.getUsername());
+            if (userWithSameUsername != null) throw new UsernameIsTakenException(userEditRequest.getUsername());
+            user.setUsername(userEditRequest.getUsername());
+        }
+        if (userEditRequest.getEmail() != null) user.setEmail(userEditRequest.getEmail());
+        if (userEditRequest.getTelephone() != null) user.setTelephone(userEditRequest.getTelephone());
+        return userRepository.save(user);
     }
 }

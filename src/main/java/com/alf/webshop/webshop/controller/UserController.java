@@ -1,10 +1,10 @@
 package com.alf.webshop.webshop.controller;
 
-import com.alf.webshop.webshop.exception.CartNotFoundException;
-import com.alf.webshop.webshop.exception.UserAlreadyExistsException;
-import com.alf.webshop.webshop.exception.UserCannotDeleteThemselfException;
-import com.alf.webshop.webshop.exception.UserNotFoundException;
+import com.alf.webshop.webshop.config.JwtTokenUtil;
+import com.alf.webshop.webshop.entity.Role;
+import com.alf.webshop.webshop.exception.*;
 import com.alf.webshop.webshop.model.request.JwtRequest;
+import com.alf.webshop.webshop.model.request.UserEditRequest;
 import com.alf.webshop.webshop.model.response.JwtResponse;
 import com.alf.webshop.webshop.entity.User;
 import com.alf.webshop.webshop.model.response.UserResponse;
@@ -17,18 +17,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.AuthenticationException;
 import javax.security.auth.login.LoginException;
 import javax.validation.Valid;
 
 @RestController
 @CrossOrigin
-public class JwtAuthenticationController {
+public class UserController {
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
@@ -56,7 +60,34 @@ public class JwtAuthenticationController {
         }
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/user/edit/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<?> editUser(@Valid @PathVariable Long id, @RequestBody UserEditRequest editedUser) {
+        try {
+            String token = JwtTokenUtil.getToken();
+            User currentUser = jwtTokenUtil.getUserFromToken(token);
+            User user = userRepository.findUserById(id);
+            if (!currentUser.getRole().equals(Role.ADMIN)) {
+                if (!currentUser.equals(user)) {
+                    throw new AuthenticationException("This user cannot edit the user with the given userId");
+                }
+            }
+            user = userService.editUserData(id, editedUser);
+
+            LoggerFactory.getLogger(this.getClass()).info("USER EDITED: " + user);
+            return ResponseEntity.ok(new UserResponse(user));
+        } catch (AuthenticationException ae) {
+            LoggerFactory.getLogger(this.getClass()).error("USER CANNOT EDIT USER WITH ID: " + id);
+            return ResponseEntity.badRequest().body(ae.getMessage());
+        } catch (UserNotFoundException unfe) {
+            LoggerFactory.getLogger(this.getClass()).error("USER WITH ID: " + unfe.getUserId() + " COULD NOT BE FOUND");
+            return new ResponseEntity<>(unfe.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (UsernameIsTakenException uite) {
+            LoggerFactory.getLogger(this.getClass()).error("USERNAME (" + editedUser.getUsername() + " IS ALREADY TAKEN");
+            return new ResponseEntity<>(uite.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(value = "/user/delete/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
             userService.deleteUser(id);
