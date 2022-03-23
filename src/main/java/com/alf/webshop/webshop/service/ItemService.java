@@ -36,30 +36,52 @@ public class ItemService {
     @Autowired
     JwtTokenUtil jwtTokenUtil;
 
-    public Item createItem(ItemRequest itemRequest) throws CouldNotCreateInstanceException {
-        Item item = new Item();
-        item.setName(itemRequest.getName());
-        item.setColor(itemRequest.getColor());
-        item.setGender(itemRequest.getGender());
-        item.setDescription(itemRequest.getDescription());
-        item.setPrice(itemRequest.getPrice());
-        item.setImages(new ArrayList<>());
-        item.setSize(itemRequest.getSize());
-        item.setSku(itemRequest.getSku());
-        item.setCategory(itemRequest.getCategory());
+    private Item itemFromRequest(Item item, ItemRequest itemRequest) {
+        if (itemRequest.getName() != null) item.setName(itemRequest.getName());
+        if (itemRequest.getColor() != null) item.setColor(itemRequest.getColor());
+        if (itemRequest.getGender() != null) item.setGender(itemRequest.getGender());
+        if (itemRequest.getDescription() != null) item.setDescription(itemRequest.getDescription());
+        if (itemRequest.getPrice() >= 0) item.setPrice(itemRequest.getPrice());
+        if (itemRequest.getSize() != null) item.setSize(itemRequest.getSize());
+        if (itemRequest.getSku() >= 0) item.setSku(itemRequest.getSku());
+        if (itemRequest.getCategory() != null) item.setCategory(itemRequest.getCategory());
+        if (item.getImages() == null) item.setImages(new ArrayList<>());
+
+        return item;
+    }
+
+    //saves an item to the database
+    private Item saveItem(Item item, ItemRequest itemRequest) throws CouldNotCreateInstanceException {
+        itemRepository.save(item);
+
         try {
-            itemRepository.save(item);
-            for (String imageUrl : itemRequest.getImages()) {
-                Image image = new Image();
-                image.setUrl(imageUrl);
-                imageRepository.save(image);
-                item.addImage(image);
+            if (itemRequest.getImages() != null && itemRequest.getImages().size() > 0) {
+                for (String imageUrl : itemRequest.getImages()) {
+                    Image image = new Image();
+                    image.setUrl(imageUrl);
+                    imageRepository.save(image);
+                    item.addImage(image);
+                }
+                itemRepository.save(item);
             }
-            itemRepository.save(item);
             return item;
         } catch (Exception e) {
             throw new CouldNotCreateInstanceException();
         }
+    }
+
+    public Item createItem(ItemRequest itemRequest) throws CouldNotCreateInstanceException {
+        Item item = itemFromRequest(new Item(), itemRequest);
+        return saveItem(item, itemRequest);
+    }
+
+    public Item editItem(Long itemId, ItemRequest editedItem) throws ItemNotFoundException, CouldNotCreateInstanceException {
+        Item item = itemRepository.findItemById(itemId);
+        if (item == null) throw new ItemNotFoundException(itemId);
+
+        itemFromRequest(item, editedItem);
+        item.setId(itemId);
+        return saveItem(item, editedItem);
     }
 
     public List<Item> listItems() throws EmptyListException {

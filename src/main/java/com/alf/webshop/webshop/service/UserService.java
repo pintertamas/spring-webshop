@@ -104,7 +104,6 @@ public class UserService {
         if (newUser.getRole().equals(Role.DELETED)) {
             newUser.setDeleted(true);
         }
-
         return newUser;
     }
 }

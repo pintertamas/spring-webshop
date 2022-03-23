@@ -61,6 +61,21 @@ public class ItemController {
         }
     }
 
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<?> editItemById(@PathVariable Long id, @Valid @RequestBody ItemRequest itemRequest) {
+        try {
+            Item item = itemService.editItem(id, itemRequest);
+            LogFactory.getLog(this.getClass()).info("ITEM BY ID: " + item);
+            return new ResponseEntity<>(new ItemResponse(item), HttpStatus.OK);
+        } catch (ItemNotFoundException e) {
+            LogFactory.getLog(this.getClass()).error("COULD NOT FIND ITEM BY ID: " + id);
+            return new ResponseEntity<>("Could not find item with id: " + id, HttpStatus.NOT_FOUND);
+        } catch (CouldNotCreateInstanceException e) {
+            LogFactory.getLog(this.getClass()).error("COULD NOT EDIT ITEM WITH ID: " + id);
+            return new ResponseEntity<>(itemRequest, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteItem(@RequestBody IdRequest request) {
         try {

@@ -53,7 +53,7 @@ public class Item {
     private Size size;
 
     @NotNull(message = "Item SKU cannot be null")
-    @Min(1)
+    @Min(0)
     @Column(name = "SKU", nullable = false)
     private int sku;
 
