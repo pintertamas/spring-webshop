@@ -1,7 +1,6 @@
 package com.alf.webshop.webshop.controller;
 
 import com.alf.webshop.webshop.entity.Item;
-import com.alf.webshop.webshop.model.request.IdRequest;
 import com.alf.webshop.webshop.model.response.ItemResponse;
 import com.alf.webshop.webshop.service.CartService;
 import org.apache.commons.logging.LogFactory;
@@ -20,24 +19,24 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addItemToCart(@Valid @RequestBody IdRequest request) {
+    @PostMapping("/add/{id}")
+    public ResponseEntity<?> addItemToCart(@Valid @PathVariable Long id) {
         try {
-            cartService.addItemToCart(request);
-            return new ResponseEntity<>("Item with ID: " + request.getId() + " was successfully added to your cart!", HttpStatus.OK);
+            cartService.addItemToCart(id);
+            return new ResponseEntity<>("Item with ID: " + id + " was successfully added to your cart!", HttpStatus.OK);
         } catch (Exception e) {
             LogFactory.getLog(this.getClass()).error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @DeleteMapping("/remove")
-    public ResponseEntity<?> deleteItemFromCart(@Valid @RequestBody IdRequest request) {
+    @DeleteMapping("/remove/{id}")
+    public ResponseEntity<?> deleteItemFromCart(@Valid @PathVariable Long id) {
         try {
             // removes one item from the current user's cart ba the ITEM ID!
-            cartService.removeItem(request);
-            LogFactory.getLog(this.getClass()).info("ITEM WITH ID: " + request.getId() + " DELETED FROM CART");
-            return new ResponseEntity<>("Item with id: " + request.getId() + " deleted from cart", HttpStatus.OK);
+            cartService.removeItem(id);
+            LogFactory.getLog(this.getClass()).info("ITEM WITH ID: " + id + " DELETED FROM CART");
+            return new ResponseEntity<>("Item with id: " + id + " deleted from cart", HttpStatus.OK);
         } catch (Exception e) {
             LogFactory.getLog(this.getClass()).error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

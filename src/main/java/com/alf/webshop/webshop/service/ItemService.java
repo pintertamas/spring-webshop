@@ -7,10 +7,8 @@ import com.alf.webshop.webshop.entity.Item;
 import com.alf.webshop.webshop.exception.CouldNotCreateInstanceException;
 import com.alf.webshop.webshop.exception.EmptyListException;
 import com.alf.webshop.webshop.exception.ItemNotFoundException;
-import com.alf.webshop.webshop.model.request.IdRequest;
 import com.alf.webshop.webshop.model.request.ItemRequest;
 import com.alf.webshop.webshop.repository.*;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -100,10 +98,10 @@ public class ItemService {
     }
 
     @Transactional
-    public void deleteItem(IdRequest request) throws Exception {
-        Item item = itemRepository.findItemById(request.getId());
+    public void deleteItem(Long id) throws Exception {
+        Item item = itemRepository.findItemById(id);
 
-        if (item == null) throw new ItemNotFoundException(request.getId());
+        if (item == null) throw new ItemNotFoundException(id);
         try {
             List<Cart> carts = item.getCarts();
             for (Cart cart : carts) {

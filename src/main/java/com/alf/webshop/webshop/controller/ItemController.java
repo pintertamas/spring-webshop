@@ -76,12 +76,12 @@ public class ItemController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteItem(@RequestBody IdRequest request) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteItem(@PathVariable Long id) {
         try {
-            itemService.deleteItem(request);
-            LogFactory.getLog(this.getClass()).info("ITEM WITH ID: " + request.getId() + " DELETED");
-            return new ResponseEntity<>("Item with ID: " + request.getId() + " deleted", HttpStatus.OK);
+            itemService.deleteItem(id);
+            LogFactory.getLog(this.getClass()).info("ITEM WITH ID: " + id + " DELETED");
+            return new ResponseEntity<>("Item with ID: " + id + " deleted", HttpStatus.OK);
         } catch (ItemNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {

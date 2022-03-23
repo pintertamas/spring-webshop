@@ -7,7 +7,6 @@ import com.alf.webshop.webshop.entity.User;
 import com.alf.webshop.webshop.exception.CartNotFoundException;
 import com.alf.webshop.webshop.exception.EmptyListException;
 import com.alf.webshop.webshop.exception.ItemNotFoundException;
-import com.alf.webshop.webshop.model.request.IdRequest;
 import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.ItemRepository;
 import org.apache.commons.logging.LogFactory;
@@ -28,16 +27,16 @@ public class CartService {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    public void addItemToCart(IdRequest request) throws Exception {
+    public void addItemToCart(Long id) throws Exception {
         String token = JwtTokenUtil.getToken();
         User user = jwtTokenUtil.getUserFromToken(token);
         Cart cart = cartRepository.findCartById(user.getCart().getId());
-        Item item = itemRepository.findItemById(request.getId());
+        Item item = itemRepository.findItemById(id);
 
         if (cart == null) {
             throw new CartNotFoundException(user.getCart().getId());
         } else if (item == null) {
-            throw new ItemNotFoundException(request.getId());
+            throw new ItemNotFoundException(id);
         }
 
         try {
@@ -53,14 +52,14 @@ public class CartService {
     }
 
     // deletes only one item matching the id given in the param from the users cart
-    public void removeItem(IdRequest request) throws Exception {
+    public void removeItem(Long id) throws Exception {
         String token = JwtTokenUtil.getToken();
         User user = jwtTokenUtil.getUserFromToken(token);
         Cart cart = cartRepository.findCartById(user.getCart().getId());
-        Item item = itemRepository.findItemById(request.getId());
+        Item item = itemRepository.findItemById(id);
 
         if (cart == null) throw new CartNotFoundException(user.getCart().getId());
-        if (item == null) throw new ItemNotFoundException(request.getId());
+        if (item == null) throw new ItemNotFoundException(id);
 
         try {
             cart.getItems().remove(item);

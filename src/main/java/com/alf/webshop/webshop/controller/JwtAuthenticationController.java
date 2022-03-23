@@ -4,7 +4,6 @@ import com.alf.webshop.webshop.exception.CartNotFoundException;
 import com.alf.webshop.webshop.exception.UserAlreadyExistsException;
 import com.alf.webshop.webshop.exception.UserCannotDeleteThemselfException;
 import com.alf.webshop.webshop.exception.UserNotFoundException;
-import com.alf.webshop.webshop.model.request.IdRequest;
 import com.alf.webshop.webshop.model.request.JwtRequest;
 import com.alf.webshop.webshop.model.response.JwtResponse;
 import com.alf.webshop.webshop.entity.User;
@@ -57,10 +56,10 @@ public class JwtAuthenticationController {
         }
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteUser(@RequestBody IdRequest request) {
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
-            userService.deleteUser(request.getId());
+            userService.deleteUser(id);
         } catch (UserCannotDeleteThemselfException ucdt) {
             LoggerFactory.getLogger(this.getClass()).error("USER CANNOT DELETE THEMSELF: " + ucdt.getUser());
             return new ResponseEntity<>(ucdt.getMessage(), HttpStatus.NOT_FOUND);
@@ -76,6 +75,6 @@ public class JwtAuthenticationController {
         }
 
         LoggerFactory.getLogger(this.getClass()).info("USER DELETED");
-        return ResponseEntity.ok("User with " + request.getId() + " was deleted successfully!");
+        return ResponseEntity.ok("User with " + id + " was deleted successfully!");
     }
 }
