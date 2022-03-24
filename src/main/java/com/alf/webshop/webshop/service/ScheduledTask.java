@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.alf.webshop.webshop.email.CustomMailSender;
+import com.alf.webshop.webshop.service.email.CustomMailSender;
 import com.alf.webshop.webshop.entity.Role;
 import com.alf.webshop.webshop.entity.User;
 import com.alf.webshop.webshop.repository.UserRepository;
@@ -54,7 +54,7 @@ public class ScheduledTask {
         log.info("Notifying inactive users...");
         for (User notifiableUser : notifiableUsers) {
             log.info("notifiable user detected: " + notifiableUser);
-            customMailSender.sendEmailWithAttachment(notifiableUser.getEmail());
+            customMailSender.sendNotificationEmail(notifiableUser.getEmail());
         }
 
     }
