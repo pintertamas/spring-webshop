@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
@@ -33,12 +34,10 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
         User user = userRepository.findUserByUsername(authenticationRequest.getUsername());
+        if (user == null) throw new BadCredentialsException("Could not find a user with this username");
         String token;
         try {
             token = userService.login(authenticationRequest);

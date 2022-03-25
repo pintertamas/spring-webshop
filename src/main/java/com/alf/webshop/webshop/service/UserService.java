@@ -88,11 +88,7 @@ public class UserService {
         long millis = System.currentTimeMillis();
         Date lastLogin = new Date(millis);
         user.setLastLoginTime(lastLogin);
-        try {
-            userRepository.save(user);
-        } catch (Exception e) {
-            throw new LoginException();
-        }
+        userRepository.save(user);
         return token;
     }
 

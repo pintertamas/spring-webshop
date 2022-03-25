@@ -52,7 +52,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 LogFactory.getLog(this.getClass()).error("JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.");
             }
         } else {
-            logger.warn("JWT Token does not begin with Bearer String");
+            logger.warn("Bad credentials");
         }
 
         // Once we get the token validate it.
