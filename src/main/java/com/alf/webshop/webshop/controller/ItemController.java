@@ -24,9 +24,6 @@ public class ItemController {
     @Autowired
     ItemService itemService;
 
-    @Autowired
-    ItemRepository itemRepository;
-
     @PostMapping("/create")
     public ResponseEntity<?> createItem(@Valid @RequestBody ItemRequest itemRequest) {
         try {
