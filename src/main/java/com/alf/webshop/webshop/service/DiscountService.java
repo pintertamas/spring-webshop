@@ -5,8 +5,8 @@ import com.alf.webshop.webshop.entity.Item;
 import com.alf.webshop.webshop.exception.DiscountAlreadyExistsException;
 import com.alf.webshop.webshop.exception.DiscountNotFoundException;
 import com.alf.webshop.webshop.exception.NoDiscountAddedException;
-import com.alf.webshop.webshop.model.request.AddDiscountRequest;
 import com.alf.webshop.webshop.model.request.DiscountRequest;
+import com.alf.webshop.webshop.model.request.CreateDiscountRequest;
 import com.alf.webshop.webshop.repository.DiscountRepository;
 import com.alf.webshop.webshop.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +24,14 @@ public class DiscountService {
     @Autowired
     ItemRepository itemRepository;
 
-    public Discount createDiscount(DiscountRequest discountRequest) throws DiscountAlreadyExistsException {
-        Discount discount = discountRepository.findDiscountByCode(discountRequest.getCode());
+    public Discount createDiscount(CreateDiscountRequest createDiscountRequest) throws DiscountAlreadyExistsException {
+        Discount discount = discountRepository.findDiscountByCode(createDiscountRequest.getCode());
         if (discount != null) throw new DiscountAlreadyExistsException(discount);
         discount = new Discount();
-        discount.setCode(discountRequest.getCode());
-        discount.setDescription(discountRequest.getDescription());
-        discount.setDiscountPercent(discountRequest.getDiscountPercent());
-        discount.setEndDate(discountRequest.getEndDate());
+        discount.setCode(createDiscountRequest.getCode());
+        discount.setDescription(createDiscountRequest.getDescription());
+        discount.setDiscountPercent(createDiscountRequest.getDiscountPercent());
+        discount.setEndDate(createDiscountRequest.getEndDate());
         discountRepository.save(discount);
         return discount;
     }
@@ -43,24 +43,41 @@ public class DiscountService {
         });
     }
 
-    public void addDiscountToItems(AddDiscountRequest addDiscountRequest) throws DiscountNotFoundException, NoDiscountAddedException {
-        Discount discount = discountRepository.findDiscountByCode(addDiscountRequest.getDiscountCode());
-        List<Item> editedItems = new ArrayList<>();
-        if (discount == null) throw new DiscountNotFoundException(addDiscountRequest.getDiscountCode());
-        if (addDiscountRequest.getItemIds() != null) {
-            List<Item> items = itemRepository.findAllByIdIn(addDiscountRequest.getItemIds());
-            if (!items.isEmpty()) editedItems.addAll(items);
+    private void removeDiscountFromItems(List<Item> items) {
+        items.forEach(item -> {
+            item.setDiscount(null);
+            itemRepository.save(item);
+        });
+    }
+
+    private List<Item> editableItems(DiscountRequest discountRequest) throws DiscountNotFoundException, NoDiscountAddedException {
+        Discount discount = discountRepository.findDiscountByCode(discountRequest.getDiscountCode());
+        List<Item> editableItems = new ArrayList<>();
+        if (discount == null) throw new DiscountNotFoundException(discountRequest.getDiscountCode());
+        if (discountRequest.getItemIds() != null) {
+            List<Item> items = itemRepository.findAllByIdIn(discountRequest.getItemIds());
+            if (!items.isEmpty()) editableItems.addAll(items);
         }
-        if (addDiscountRequest.getCategories() != null) {
+        if (discountRequest.getCategories() != null) {
             List<Item> items;
-            if (addDiscountRequest.getGender() != null) {
-                items = itemRepository.findAllByCategoryInAndGender(addDiscountRequest.getCategories(), addDiscountRequest.getGender());
+            if (discountRequest.getGender() != null) {
+                items = itemRepository.findAllByCategoryInAndGender(discountRequest.getCategories(), discountRequest.getGender());
             } else {
-                items = itemRepository.findAllByCategoryIn(addDiscountRequest.getCategories());
+                items = itemRepository.findAllByCategoryIn(discountRequest.getCategories());
             }
-            if (!items.isEmpty()) editedItems.addAll(items);
+            if (!items.isEmpty()) editableItems.addAll(items);
         }
-        if (!editedItems.isEmpty()) saveItemsWithDiscount(editedItems, discount);
-        else throw new NoDiscountAddedException();
+        return editableItems;
+    }
+
+    public void addDiscountToItems(DiscountRequest discountRequest) throws DiscountNotFoundException, NoDiscountAddedException {
+        Discount discount = discountRepository.findDiscountByCode(discountRequest.getDiscountCode());
+        List<Item> editableItems = editableItems(discountRequest);
+        saveItemsWithDiscount(editableItems, discount);
+    }
+
+    public void removeDiscountFromItems(DiscountRequest discountRequest) throws DiscountNotFoundException, NoDiscountAddedException {
+        List<Item> editableItems = editableItems(discountRequest);
+        removeDiscountFromItems(editableItems);
     }
 }
