@@ -3,10 +3,12 @@ package com.alf.webshop.webshop.model.response;
 import com.alf.webshop.webshop.entity.Role;
 import com.alf.webshop.webshop.entity.User;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.sql.Date;
 
 @Getter
+@ToString
 public class UserResponse {
     private final Long id;
     private final Role role;
