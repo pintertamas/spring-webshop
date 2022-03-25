@@ -6,7 +6,6 @@ import com.alf.webshop.webshop.exception.EmptyListException;
 import com.alf.webshop.webshop.exception.ItemNotFoundException;
 import com.alf.webshop.webshop.model.request.ItemRequest;
 import com.alf.webshop.webshop.model.response.ItemResponse;
-import com.alf.webshop.webshop.repository.ItemRepository;
 import com.alf.webshop.webshop.service.ItemService;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
