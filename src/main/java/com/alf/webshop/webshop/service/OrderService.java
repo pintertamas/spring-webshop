@@ -33,14 +33,22 @@ public class OrderService {
     @Autowired
     CartRepository cartRepository;
 
-    public void orderItemsInCart() throws NothingToOrderException {
+    public void createOrderFromCart() throws NothingToOrderException {
         String token = JwtTokenUtil.getToken();
         User user = jwtTokenUtil.getUserFromToken(token);
         Cart cart = user.getCart();
         if (user.getCart().getItems().size() == 0) throw new NothingToOrderException(user.getCart().getId());
 
         OrderDetails newOrderDetails = new OrderDetails();
-        newOrderDetails.setTotal(cart.getItems().size());
+        double total = 0;
+        for (Item item : cart.getItems()) {
+            if (item.getDiscount() == null) {
+                total += item.getPrice();
+            } else {
+                total += item.getPrice() * (100 - item.getDiscount().getDiscountPercent()) / 100;
+            }
+        }
+        newOrderDetails.setTotal(total);
         newOrderDetails.setUserId(user.getId());
         newOrderDetails.setCreatedAt(new Date(System.currentTimeMillis()));
         orderDetailsRepository.save(newOrderDetails);

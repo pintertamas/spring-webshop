@@ -20,7 +20,7 @@ public class OrderController {
     @PostMapping("/create")
     public ResponseEntity<?> createOrder() {
         try {
-            orderService.orderItemsInCart();
+            orderService.createOrderFromCart();
             LogFactory.getLog(this.getClass()).info("ORDER CREATED");
             return new ResponseEntity<>("Your order was successful!", HttpStatus.OK);
         } catch (NothingToOrderException e) {

@@ -21,7 +21,7 @@ public class OrderDetails {
     private Long userId;
 
     @Column(name = "total")
-    private int total;
+    private double total;
 
     @Column(name = "created_at")
     private Date createdAt;
