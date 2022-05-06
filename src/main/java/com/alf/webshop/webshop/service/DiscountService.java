@@ -38,18 +38,22 @@ public class DiscountService {
         return discount;
     }
 
-    private void saveItemsWithDiscount(List<Item> items, Discount discount) {
+    private List<Item> saveItemsWithDiscount(List<Item> items, Discount discount) {
+        List<Item> itemsResult = new ArrayList<>();
         items.forEach(item -> {
             item.setDiscount(discount);
             itemRepository.save(item);
+            itemsResult.add(item);
         });
+        return itemsResult;
     }
 
-    private void removeDiscountFromItems(List<Item> items) {
+    private List<Item> removeDiscountFromItems(List<Item> items) {
         items.forEach(item -> {
             item.setDiscount(null);
             itemRepository.save(item);
         });
+        return items;
     }
 
     private List<Item> editableItems(DiscountRequest discountRequest) throws DiscountNotFoundException, NoDiscountAddedException {
@@ -72,14 +76,14 @@ public class DiscountService {
         return editableItems;
     }
 
-    public void addDiscountToItems(DiscountRequest discountRequest) throws DiscountNotFoundException, NoDiscountAddedException {
+    public List<Item> addDiscountToItems(DiscountRequest discountRequest) throws DiscountNotFoundException, NoDiscountAddedException {
         Discount discount = discountRepository.findDiscountByCode(discountRequest.getDiscountCode());
         List<Item> editableItems = editableItems(discountRequest);
-        saveItemsWithDiscount(editableItems, discount);
+        return saveItemsWithDiscount(editableItems, discount);
     }
 
-    public void removeDiscountFromItems(DiscountRequest discountRequest) throws DiscountNotFoundException, NoDiscountAddedException {
+    public List<Item> removeDiscountFromItems(DiscountRequest discountRequest) throws DiscountNotFoundException, NoDiscountAddedException {
         List<Item> editableItems = editableItems(discountRequest);
-        removeDiscountFromItems(editableItems);
+        return removeDiscountFromItems(editableItems);
     }
 }

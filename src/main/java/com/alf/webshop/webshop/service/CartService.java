@@ -29,7 +29,7 @@ public class CartService {
     //@Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    public void addItemToCart(Long id) throws Exception {
+    public Item addItemToCart(Long id) throws Exception {
         String token = JwtTokenUtil.getToken();
         User user = jwtTokenUtil.getUserFromToken(token);
         Cart cart = cartRepository.findCartById(user.getCart().getId());
@@ -47,6 +47,7 @@ public class CartService {
             item.addToCart(cart);
             cart.setTotal(cart.getTotal() + 1);
             itemRepository.save(item);
+            return item;
         } catch (Exception e) {
             LogFactory.getLog(this.getClass()).error(e.getMessage());
             throw new Exception();
@@ -54,7 +55,7 @@ public class CartService {
     }
 
     // deletes only one item matching the id given in the param from the users cart
-    public void removeItem(Long id) throws Exception {
+    public Cart removeItem(Long id) throws Exception {
         String token = JwtTokenUtil.getToken();
         User user = jwtTokenUtil.getUserFromToken(token);
         Cart cart = cartRepository.findCartById(user.getCart().getId());
@@ -66,6 +67,7 @@ public class CartService {
         try {
             cart.getItems().remove(item);
             cartRepository.save(cart);
+            return cart;
         } catch (Exception e) {
             throw new Exception("Could not remove item!");
         }
