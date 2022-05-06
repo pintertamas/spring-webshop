@@ -11,6 +11,8 @@ import com.alf.webshop.webshop.exception.UsernameIsTakenException;
 import com.alf.webshop.webshop.model.request.JwtRequest;
 import com.alf.webshop.webshop.model.request.PasswordRequest;
 import com.alf.webshop.webshop.model.request.UserEditRequest;
+import com.alf.webshop.webshop.model.response.JwtResponse;
+import com.alf.webshop.webshop.model.response.UserResponse;
 import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +80,7 @@ public class UserService {
         }
     }
 
-    public String login(JwtRequest authenticationRequest) throws Exception {
+    public JwtResponse login(JwtRequest authenticationRequest) throws Exception {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
@@ -89,7 +91,7 @@ public class UserService {
         Date lastLogin = new Date(millis);
         user.setLastLoginTime(lastLogin);
         userRepository.save(user);
-        return token;
+        return new JwtResponse(token, new UserResponse(user));
     }
 
     public User register(User newUser) throws UserAlreadyExistsException {

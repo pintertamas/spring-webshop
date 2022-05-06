@@ -2,13 +2,11 @@ package com.alf.webshop.webshop.service;
 
 import com.alf.webshop.webshop.config.JwtTokenUtil;
 import com.alf.webshop.webshop.entity.*;
-import com.alf.webshop.webshop.exception.CartNotFoundException;
 import com.alf.webshop.webshop.exception.NothingToOrderException;
 import com.alf.webshop.webshop.model.response.OrderResponse;
 import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.OrderDetailsRepository;
 import com.alf.webshop.webshop.repository.OrderItemRepository;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
@@ -33,7 +31,7 @@ public class OrderService {
     @Autowired
     CartRepository cartRepository;
 
-    public void createOrderFromCart() throws NothingToOrderException {
+    public List<OrderItem> createOrderFromCart() throws NothingToOrderException {
         String token = JwtTokenUtil.getToken();
         User user = jwtTokenUtil.getUserFromToken(token);
         Cart cart = user.getCart();
@@ -53,14 +51,17 @@ public class OrderService {
         newOrderDetails.setCreatedAt(new Date(System.currentTimeMillis()));
         orderDetailsRepository.save(newOrderDetails);
 
+        List<OrderItem> orderItems = new ArrayList();
         for (Item item : cart.getItems()) {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrderId(newOrderDetails.getId());
             orderItem.setItemId(item.getId());
             orderItemRepository.save(orderItem);
+            orderItems.add(orderItem);
         }
         user.getCart().setItems(new ArrayList<>());
         cartRepository.save(user.getCart());
+        return orderItems;
     }
 
     public OrderResponse viewOrder(Long orderId) {
