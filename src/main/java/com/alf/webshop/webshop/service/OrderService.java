@@ -7,6 +7,7 @@ import com.alf.webshop.webshop.model.response.OrderResponse;
 import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.OrderDetailsRepository;
 import com.alf.webshop.webshop.repository.OrderItemRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
 
     @Autowired
