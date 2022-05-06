@@ -40,7 +40,7 @@ public class UserController {
         if (user == null) throw new BadCredentialsException("Could not find a user with this username");
         String token;
         try {
-            token = userService.login(authenticationRequest);
+            token = userService.login(authenticationRequest).getJwtToken();
         } catch (LoginException e) {
             LogFactory.getLog(this.getClass()).error("ERROR AT LOGIN: " + user.getLastLoginTime() + " " + user);
             return new ResponseEntity<>("Could not reach database", HttpStatus.INTERNAL_SERVER_ERROR);
