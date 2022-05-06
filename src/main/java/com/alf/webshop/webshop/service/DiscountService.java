@@ -9,6 +9,7 @@ import com.alf.webshop.webshop.model.request.DiscountRequest;
 import com.alf.webshop.webshop.model.request.CreateDiscountRequest;
 import com.alf.webshop.webshop.repository.DiscountRepository;
 import com.alf.webshop.webshop.repository.ItemRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DiscountService {
 
-    @Autowired
+    //@Autowired
     DiscountRepository discountRepository;
 
-    @Autowired
+    //@Autowired
     ItemRepository itemRepository;
 
     public Discount createDiscount(CreateDiscountRequest createDiscountRequest) throws DiscountAlreadyExistsException {

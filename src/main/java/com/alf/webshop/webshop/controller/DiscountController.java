@@ -10,6 +10,7 @@ import com.alf.webshop.webshop.service.DiscountService;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ public class DiscountController {
     @Autowired
     DiscountService discountService;
 
+    //@PostMapping(value = "/create",consumes = {"multipart/form-data"},produces = {"MediaType.APPLICATION_JSON_UTF8_VALUE"})
     @PostMapping("/create")
     public ResponseEntity<?> createDiscount(@Valid @RequestBody CreateDiscountRequest createDiscountRequest) {
         try {

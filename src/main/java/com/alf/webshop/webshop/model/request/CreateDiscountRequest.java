@@ -2,6 +2,7 @@ package com.alf.webshop.webshop.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.validation.constraints.Max;
@@ -12,6 +13,7 @@ import java.sql.Date;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor //because of Controller Test nested exception
 public class CreateDiscountRequest {
 
     @NotNull(message = "Discount code cannot be null")

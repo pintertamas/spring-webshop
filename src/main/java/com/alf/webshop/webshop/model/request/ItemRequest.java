@@ -3,6 +3,7 @@ package com.alf.webshop.webshop.model.request;
 import com.alf.webshop.webshop.entity.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.Min;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ItemRequest {
     @NotBlank(message = "Item name cannot be blank")
     String name;

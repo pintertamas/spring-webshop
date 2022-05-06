@@ -2,6 +2,7 @@ package com.alf.webshop.webshop.model.request;
 
 import com.alf.webshop.webshop.entity.Category;
 import com.alf.webshop.webshop.entity.Gender;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public class DiscountRequest {
     @NotNull(message = "Discount code cannot be null!")
     @NotBlank(message = "Discount code cannot be blank!")

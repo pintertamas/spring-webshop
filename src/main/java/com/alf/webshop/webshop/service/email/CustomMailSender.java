@@ -12,7 +12,7 @@ import javax.mail.internet.MimeMessage;
 @Service
 public class CustomMailSender {
 
-    @Autowired
+    @Autowired(required = false)
     private JavaMailSender javaMailSender;
 
     public void sendNotificationEmail(String toEmail) {

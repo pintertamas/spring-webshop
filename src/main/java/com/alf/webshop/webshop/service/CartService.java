@@ -9,6 +9,7 @@ import com.alf.webshop.webshop.exception.EmptyListException;
 import com.alf.webshop.webshop.exception.ItemNotFoundException;
 import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.ItemRepository;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,15 +17,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CartService {
 
-    @Autowired
+    //@Autowired
     private CartRepository cartRepository;
 
-    @Autowired
+    //@Autowired
     private ItemRepository itemRepository;
 
-    @Autowired
+    //@Autowired
     private JwtTokenUtil jwtTokenUtil;
 
     public void addItemToCart(Long id) throws Exception {
