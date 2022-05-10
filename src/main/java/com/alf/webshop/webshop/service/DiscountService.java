@@ -9,6 +9,7 @@ import com.alf.webshop.webshop.model.request.DiscountRequest;
 import com.alf.webshop.webshop.model.request.CreateDiscountRequest;
 import com.alf.webshop.webshop.repository.DiscountRepository;
 import com.alf.webshop.webshop.repository.ItemRepository;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,10 @@ import java.util.List;
 public class DiscountService {
 
     //@Autowired
-    DiscountRepository discountRepository;
+    private DiscountRepository discountRepository;
 
     //@Autowired
-    ItemRepository itemRepository;
+    private ItemRepository itemRepository;
 
     public Discount createDiscount(CreateDiscountRequest createDiscountRequest) throws DiscountAlreadyExistsException {
         Discount discount = discountRepository.findDiscountByCode(createDiscountRequest.getCode());
@@ -38,7 +39,8 @@ public class DiscountService {
         return discount;
     }
 
-    private List<Item> saveItemsWithDiscount(List<Item> items, Discount discount) {
+    //public because of testing
+    public List<Item> saveItemsWithDiscount(List<Item> items, Discount discount) {
         List<Item> itemsResult = new ArrayList<>();
         items.forEach(item -> {
             item.setDiscount(discount);

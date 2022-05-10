@@ -2,6 +2,7 @@ package com.alf.webshop.webshop.service;
 
 import java.util.List;
 
+import com.alf.webshop.webshop.config.JwtTokenUtil;
 import com.alf.webshop.webshop.entity.Role;
 import com.alf.webshop.webshop.entity.User;
 import com.alf.webshop.webshop.repository.CartRepository;
@@ -20,6 +21,9 @@ public class JwtUserDetailsService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    JwtTokenUtil jwtTokenUtil;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findUserByUsername(username);
@@ -36,4 +40,10 @@ public class JwtUserDetailsService implements UserDetailsService {
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
+
+    public User getUserFromToken(){
+        String token = JwtTokenUtil.getToken();
+        return jwtTokenUtil.getUserFromToken(token);
+    }
+
 }

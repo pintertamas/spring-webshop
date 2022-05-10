@@ -9,6 +9,8 @@ import com.alf.webshop.webshop.exception.EmptyListException;
 import com.alf.webshop.webshop.exception.ItemNotFoundException;
 import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.ItemRepository;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +29,10 @@ public class CartService {
     private ItemRepository itemRepository;
 
     //@Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    private JwtUserDetailsService jwtUserDetailsService;
 
     public Item addItemToCart(Long id) throws Exception {
-        String token = JwtTokenUtil.getToken();
-        User user = jwtTokenUtil.getUserFromToken(token);
+        User user = jwtUserDetailsService.getUserFromToken();
         Cart cart = cartRepository.findCartById(user.getCart().getId());
         Item item = itemRepository.findItemById(id);
 
@@ -56,8 +57,7 @@ public class CartService {
 
     // deletes only one item matching the id given in the param from the users cart
     public Cart removeItem(Long id) throws Exception {
-        String token = JwtTokenUtil.getToken();
-        User user = jwtTokenUtil.getUserFromToken(token);
+        User user = jwtUserDetailsService.getUserFromToken();
         Cart cart = cartRepository.findCartById(user.getCart().getId());
         Item item = itemRepository.findItemById(id);
 
@@ -74,8 +74,7 @@ public class CartService {
     }
 
     public List<Item> listCartItems() throws EmptyListException {
-        String token = JwtTokenUtil.getToken();
-        User user = jwtTokenUtil.getUserFromToken(token);
+        User user = jwtUserDetailsService.getUserFromToken();
         List<Item> items = user.getCart().getItems();
 
         if (items.isEmpty()) {

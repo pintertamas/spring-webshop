@@ -18,21 +18,14 @@ import java.util.List;
 
 @Service
 public class ItemService {
-
-    @Autowired
-    UserRepository userRepository;
-
-    @Autowired
+    //@Autowired
     ItemRepository itemRepository;
 
-    @Autowired
+    //@Autowired
     CartRepository cartRepository;
 
-    @Autowired
+    //@Autowired
     ImageRepository imageRepository;
-
-    @Autowired
-    JwtTokenUtil jwtTokenUtil;
 
     private Item itemFromRequest(Item item, ItemRequest itemRequest) {
         if (itemRequest.getName() != null) item.setName(itemRequest.getName());

@@ -21,21 +21,22 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class OrderService {
 
-    @Autowired
-    JwtTokenUtil jwtTokenUtil;
+    //@Autowired
+   // JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
+    JwtUserDetailsService jwtUserDetailsService;
+
+    //@Autowired
     OrderItemRepository orderItemRepository;
 
-    @Autowired
+    //@Autowired
     OrderDetailsRepository orderDetailsRepository;
 
-    @Autowired
+    //@Autowired
     CartRepository cartRepository;
 
     public List<OrderItem> createOrderFromCart() throws NothingToOrderException {
-        String token = JwtTokenUtil.getToken();
-        User user = jwtTokenUtil.getUserFromToken(token);
+        User user = jwtUserDetailsService.getUserFromToken();
         Cart cart = user.getCart();
         if (user.getCart().getItems().size() == 0) throw new NothingToOrderException(user.getCart().getId());
 
@@ -68,8 +69,7 @@ public class OrderService {
 
     public OrderResponse viewOrder(Long orderId) {
         OrderDetails orderDetails = orderDetailsRepository.findOrderDetailsById(orderId);
-        String token = JwtTokenUtil.getToken();
-        User user = jwtTokenUtil.getUserFromToken(token);
+        User user = jwtUserDetailsService.getUserFromToken();
         if (!Objects.equals(orderDetails.getUserId(), user.getId()))
             throw new AuthorizationServiceException("You dont have permission to view this data");
         List<OrderItem> orderItems = orderItemRepository.findOrderItemsByOrderId(orderId);
@@ -79,7 +79,7 @@ public class OrderService {
     public List<OrderResponse> listOrders() {
         List<OrderResponse> orders = new ArrayList<>();
         String token = JwtTokenUtil.getToken();
-        User user = jwtTokenUtil.getUserFromToken(token);
+        User user = jwtUserDetailsService.getUserFromToken();
         List<OrderDetails> orderDetails = orderDetailsRepository.findAllByUserId(user.getId());
 
         for (OrderDetails orderDetail : orderDetails) {
