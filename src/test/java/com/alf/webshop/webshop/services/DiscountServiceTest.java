@@ -112,5 +112,10 @@ public class DiscountServiceTest {
 
     }
 
+    @Test
+    public void removeDiscountFromItems(){
+
+    }
+
 
 }
