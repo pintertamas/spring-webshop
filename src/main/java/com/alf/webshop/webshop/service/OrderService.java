@@ -18,21 +18,17 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class OrderService {
-
-    //@Autowired
-   // JwtTokenUtil jwtTokenUtil;
-
     JwtUserDetailsService jwtUserDetailsService;
 
-    //@Autowired
+    @Autowired
     OrderItemRepository orderItemRepository;
 
-    //@Autowired
+    @Autowired
     OrderDetailsRepository orderDetailsRepository;
 
-    //@Autowired
+    @Autowired
     CartRepository cartRepository;
 
     public List<OrderItem> createOrderFromCart() throws NothingToOrderException {

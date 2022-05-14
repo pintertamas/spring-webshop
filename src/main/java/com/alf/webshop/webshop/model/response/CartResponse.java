@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CartResponse {
-    private Long id;
-    private int total;
-    private List<Item> items;
+    private final Long id;
+    private final int total;
+    private final List<Item> items;
 
     public CartResponse(Cart cart) {
         this.id = cart.getId();

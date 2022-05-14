@@ -14,5 +14,6 @@ import java.util.ArrayList;
 public interface UserRepository extends JpaRepository<User, String> {
     User findUserById(Long id);
     User findUserByUsername(String username);
+    User findUserByEmail(String email);
     ArrayList<User> findUsersByLastLoginTimeBeforeAndRoleIsNot(Date lastLoginTimeBefore, Role notThisRole);
 }

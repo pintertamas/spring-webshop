@@ -1,6 +1,5 @@
 package com.alf.webshop.webshop.service;
 
-import com.alf.webshop.webshop.config.JwtTokenUtil;
 import com.alf.webshop.webshop.entity.Cart;
 import com.alf.webshop.webshop.entity.Image;
 import com.alf.webshop.webshop.entity.Item;
@@ -8,7 +7,9 @@ import com.alf.webshop.webshop.exception.CouldNotCreateInstanceException;
 import com.alf.webshop.webshop.exception.EmptyListException;
 import com.alf.webshop.webshop.exception.ItemNotFoundException;
 import com.alf.webshop.webshop.model.request.ItemRequest;
-import com.alf.webshop.webshop.repository.*;
+import com.alf.webshop.webshop.repository.CartRepository;
+import com.alf.webshop.webshop.repository.ImageRepository;
+import com.alf.webshop.webshop.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +19,13 @@ import java.util.List;
 
 @Service
 public class ItemService {
-    //@Autowired
+    @Autowired
     ItemRepository itemRepository;
 
-    //@Autowired
+    @Autowired
     CartRepository cartRepository;
 
-    //@Autowired
+    @Autowired
     ImageRepository imageRepository;
 
     private Item itemFromRequest(Item item, ItemRequest itemRequest) {
@@ -41,7 +42,7 @@ public class ItemService {
         return item;
     }
 
-    //saves an item to the database
+    // overrides the first item's attributes with the ones defined in the itemRequest and saves the item to the database
     private Item saveItem(Item item, ItemRequest itemRequest) throws CouldNotCreateInstanceException {
         itemRepository.save(item);
 

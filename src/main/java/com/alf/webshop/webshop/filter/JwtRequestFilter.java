@@ -11,10 +11,12 @@ import com.alf.webshop.webshop.config.JwtTokenUtil;
 import com.alf.webshop.webshop.service.JwtUserDetailsService;
 import io.jsonwebtoken.security.SignatureException;
 import org.apache.juli.logging.LogFactory;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -58,20 +60,23 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // Once we get the token validate it.
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+            try {
+                UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+                // if token is valid configure Spring Security to manually set
+                // authentication
+                if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
 
-            // if token is valid configure Spring Security to manually set
-            // authentication
-            if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
-
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                // After setting the Authentication in the context, we specify
-                // that the current user is authenticated. So it passes the
-                // Spring Security Configurations successfully.
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    usernamePasswordAuthenticationToken
+                            .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    // After setting the Authentication in the context, we specify
+                    // that the current user is authenticated. So it passes the
+                    // Spring Security Configurations successfully.
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                }
+            } catch (UsernameNotFoundException unfe) {
+                LoggerFactory.getLogger(this.getClass()).error("USER NOT FOUND WITH THE GIVEN USERNAME!");
             }
         }
         chain.doFilter(request, response);

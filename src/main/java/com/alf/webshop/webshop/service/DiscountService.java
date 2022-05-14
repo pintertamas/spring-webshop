@@ -9,7 +9,6 @@ import com.alf.webshop.webshop.model.request.DiscountRequest;
 import com.alf.webshop.webshop.model.request.CreateDiscountRequest;
 import com.alf.webshop.webshop.repository.DiscountRepository;
 import com.alf.webshop.webshop.repository.ItemRepository;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,13 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class DiscountService {
 
-    //@Autowired
+    @Autowired
     private DiscountRepository discountRepository;
 
-    //@Autowired
+    @Autowired
     private ItemRepository itemRepository;
 
     public Discount createDiscount(CreateDiscountRequest createDiscountRequest) throws DiscountAlreadyExistsException {
@@ -58,7 +57,7 @@ public class DiscountService {
         return items;
     }
 
-    private List<Item> editableItems(DiscountRequest discountRequest) throws DiscountNotFoundException, NoDiscountAddedException {
+    private List<Item> editableItems(DiscountRequest discountRequest) throws DiscountNotFoundException {
         Discount discount = discountRepository.findDiscountByCode(discountRequest.getDiscountCode());
         List<Item> editableItems = new ArrayList<>();
         if (discount == null) throw new DiscountNotFoundException(discountRequest.getDiscountCode());

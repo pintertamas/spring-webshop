@@ -25,7 +25,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.AuthenticationException;
-import javax.security.auth.login.LoginException;
 import java.sql.Date;
 
 @Service
@@ -95,7 +94,7 @@ public class UserService {
     }
 
     public User register(User newUser) throws UserAlreadyExistsException {
-        if (userRepository.findUserByUsername(newUser.getUsername()) != null) {
+        if (userRepository.findUserByUsername(newUser.getUsername()) != null || userRepository.findUserByEmail(newUser.getEmail()) != null) {
             throw new UserAlreadyExistsException(newUser);
         }
         newUser.setRole(Role.USER);
