@@ -33,7 +33,7 @@ public class CartController {
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<?> deleteItemFromCart(@Valid @PathVariable Long id) {
         try {
-            // removes one item from the current user's cart ba the ITEM ID!
+            // removes one item from the current user's cart by the ITEM ID!
             cartService.removeItem(id);
             LogFactory.getLog(this.getClass()).info("ITEM WITH ID: " + id + " DELETED FROM CART");
             return new ResponseEntity<>("Item with id: " + id + " deleted from cart", HttpStatus.OK);
