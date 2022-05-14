@@ -25,7 +25,7 @@ Alap feladatok (maximális kapható pontokkal):
 - [X] 5p: Java Persistence API használata, legalább 5 osztállyal.
 - [X] 2p: Spring Data használata
 - [X] 3p: Függőséginjektálás Spring alapokon
-- [ ] 3p: Az alapértelmezettől eltérő tranzakció kezelés.
+- [X] 3p: Az alapértelmezettől eltérő tranzakció kezelés.
 - [X] 5p: Megfelelő biztonsági óvintézkedések (authorizáció, SQL injection kivédése, szerver oldali validáció, biztonságos jelszó tárolás stb.)
 - [X] 2p: Unit tesztek használata (Jelentős lefedettség esetén további bónusz pontokat ér.)
 - [X] 3p: Qt alatt signals and slots mechanizmus használata.
