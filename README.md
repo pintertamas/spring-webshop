@@ -27,7 +27,7 @@ Alap feladatok (maximális kapható pontokkal):
 - [X] 3p: Függőséginjektálás Spring alapokon
 - [ ] 3p: Az alapértelmezettől eltérő tranzakció kezelés.
 - [X] 5p: Megfelelő biztonsági óvintézkedések (authorizáció, SQL injection kivédése, szerver oldali validáció, biztonságos jelszó tárolás stb.)
-- [ ] 2p: Unit tesztek használata (Jelentős lefedettség esetén további bónusz pontokat ér.)
+- [X] 2p: Unit tesztek használata (Jelentős lefedettség esetén további bónusz pontokat ér.)
 - [X] 3p: Qt alatt signals and slots mechanizmus használata.
 - [X] 3p: Logolási mechanizmus használata loglevel támogatással.
 
