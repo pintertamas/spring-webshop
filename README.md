@@ -10,6 +10,8 @@ Csapattagok Neptun kóddal:
 Bemutató videó URL: 
 (Ugye minden olyan dolog szerepel benne a kiírásnak megfelelően, amire pontot szeretnétek kapni?)
 
+Videó a backendről: [link](https://www.youtube.com/watch?v=zBZk4GTg4mQ)
+
 **Pontot érő technológiák**
 (Amit elkészítettetek, azt X-eljétek be!)
 
@@ -42,8 +44,6 @@ Bónusz feladatok, melyek plusz utánajárást is igényelhetnek (maximális kap
 - [ ] 8p: Induláskor lefutó öntesztelő funkció megvalósítása, mely a rendszer minden komponensének elérhetőségét és alapvető funkcióinak működőképességét teszteli (pl. webes felületről egy adat elmentése adatbázisba, majd visszaolvasása, hardver periféria megszólítása, valamint a vastag kliensen a logba írás).
 
 A hivatalos teljes lista a HF feladatkiírásban található: https://www.aut.bme.hu/Course/VIAUAC04
-
-Videó a backendről: [link](https://www.youtube.com/watch?v=zBZk4GTg4mQ)
 
 **A videó újrahasznosíthatósága**
 
