@@ -43,6 +43,8 @@ Bónusz feladatok, melyek plusz utánajárást is igényelhetnek (maximális kap
 
 A hivatalos teljes lista a HF feladatkiírásban található: https://www.aut.bme.hu/Course/VIAUAC04
 
+Videó a backendről: [link](https://www.youtube.com/watch?v=zBZk4GTg4mQ)
+
 **A videó újrahasznosíthatósága**
 
 A házi feladat videót oktatási célokra újrahasznosíthatjuk? (Későbbi évfolyamoknak bemutatás, vágott anyagban felhasználás.)
