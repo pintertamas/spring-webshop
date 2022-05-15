@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.naming.AuthenticationException;
 import javax.security.auth.login.LoginException;
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 
 @RestController
 @CrossOrigin

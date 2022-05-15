@@ -1,6 +1,5 @@
 package com.alf.webshop.webshop.service;
 
-import com.alf.webshop.webshop.config.JwtTokenUtil;
 import com.alf.webshop.webshop.entity.Cart;
 import com.alf.webshop.webshop.entity.Item;
 import com.alf.webshop.webshop.entity.User;
@@ -9,8 +8,6 @@ import com.alf.webshop.webshop.exception.EmptyListException;
 import com.alf.webshop.webshop.exception.ItemNotFoundException;
 import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.ItemRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +16,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class CartService {
 
-    //@Autowired
+    @Autowired
     private CartRepository cartRepository;
 
-    //@Autowired
+    @Autowired
     private ItemRepository itemRepository;
 
-    //@Autowired
+    @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
 
     public Item addItemToCart(Long id) throws Exception {
