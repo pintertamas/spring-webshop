@@ -11,7 +11,9 @@ Bemutató videó URL:
 (Ugye minden olyan dolog szerepel benne a kiírásnak megfelelően, amire pontot szeretnétek kapni?)
 
 Videó a backendről: [link](https://www.youtube.com/watch?v=zBZk4GTg4mQ)
+
 Videó a tesztről : [link](https://youtu.be/6omvONVhm3o)
+
 Teszt hivatkozás : https://reflectoring.io/unit-testing-spring-boot/
 
 **Pontot érő technológiák**
