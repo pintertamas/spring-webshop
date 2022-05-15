@@ -1,6 +1,8 @@
 package com.alf.webshop.webshop.services;
 import com.alf.webshop.webshop.entity.*;
+import com.alf.webshop.webshop.exception.CartNotFoundException;
 import com.alf.webshop.webshop.exception.EmptyListException;
+import com.alf.webshop.webshop.exception.ItemNotFoundException;
 import com.alf.webshop.webshop.repository.CartRepository;
 import com.alf.webshop.webshop.repository.ItemRepository;
 import com.alf.webshop.webshop.service.CartService;
@@ -14,13 +16,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-//@RunWith(SpringRunner.class)
+
 @RunWith(MockitoJUnitRunner.class)
 @WebMvcTest(CartService.class)
 @ContextConfiguration(classes = CartService.class)
@@ -75,6 +76,67 @@ public class CartServiceTest {
 
     //happypath
     @Test
+    public void addItemToCartTestThrowsCartNotFoundException( )throws Exception{
+        Cart cart = new Cart();
+        cart.setId(1L);
+        cart.setTotal(0);
+
+        Item item  =new Item();
+        item.setId(1L);
+        item.setName("MockItem");
+        item.setDescription("MockDesc");
+        item.setPrice(12);
+        item.setColor(Color.BLACK);
+        item.setGender(Gender.MAN);
+        item.setSize(Size._80E);
+        item.setSku(2);
+        item.setCategory(Category.BRA);
+
+        User user = new User();
+        user.setUsername("peter");
+        user.setCart(cart);
+
+        Mockito.when(jwtUserDetailsService.getUserFromToken()).thenReturn(user);
+        Mockito.when(cartRepository.findCartById(1L)).thenReturn(null);
+        Mockito.when(itemRepository.findItemById(1L)).thenReturn(item);
+        //assertNotEquals(item,cartService.addItemToCart(1L));
+        assertThrows(CartNotFoundException.class,()->{
+            cartService.addItemToCart(1L);
+        });
+    }
+
+    @Test
+    public void addItemToCartTestThrowsItemNotFoundException( )throws Exception{
+        Cart cart = new Cart();
+        cart.setId(1L);
+        cart.setTotal(0);
+
+        Item item  =new Item();
+        item.setId(1L);
+        item.setName("MockItem");
+        item.setDescription("MockDesc");
+        item.setPrice(12);
+        item.setColor(Color.BLACK);
+        item.setGender(Gender.MAN);
+        item.setSize(Size._80E);
+        item.setSku(2);
+        item.setCategory(Category.BRA);
+
+        User user = new User();
+        user.setUsername("peter");
+        user.setCart(cart);
+
+        Mockito.when(jwtUserDetailsService.getUserFromToken()).thenReturn(user);
+        Mockito.when(cartRepository.findCartById(1L)).thenReturn(cart);
+        Mockito.when(itemRepository.findItemById(1L)).thenReturn(null);
+        //assertNotEquals(item,cartService.addItemToCart(1L));
+        assertThrows(ItemNotFoundException.class,()->{
+            cartService.addItemToCart(1L);
+        });
+    }
+
+    //happypath
+    @Test
     public void removeItemTest()throws Exception{
         Cart cart = new Cart();
         cart.setId(1L);
@@ -105,6 +167,74 @@ public class CartServiceTest {
         //assertNotEquals(item,cartService.addItemToCart(1L));
         Cart after = cartService.removeItem(1L);
         assertEquals(new ArrayList<Item>(),after.getItems());
+    }
+
+    @Test
+    public void removeItemTestThrowsCartNotFoundException()throws Exception{
+            Cart cart = new Cart();
+            cart.setId(1L);
+            cart.setTotal(0);
+
+            Item item  =new Item();
+            item.setId(1L);
+            item.setName("MockItem");
+            item.setDescription("MockDesc");
+            item.setPrice(12);
+            item.setColor(Color.BLACK);
+            item.setGender(Gender.MAN);
+            item.setSize(Size._80E);
+            item.setSku(2);
+            item.setCategory(Category.BRA);
+
+            ArrayList<Item> items = new ArrayList<>();
+            items.add(item);
+            cart.setItems(items);
+
+            User user = new User();
+            user.setUsername("peter");
+            user.setCart(cart);
+
+            Mockito.when(jwtUserDetailsService.getUserFromToken()).thenReturn(user);
+            Mockito.when(cartRepository.findCartById(1L)).thenReturn(null);
+            Mockito.when(itemRepository.findItemById(1L)).thenReturn(item);
+
+            Mockito.when(cartRepository.findCartById(1L)).thenReturn(null);
+            assertThrows(CartNotFoundException.class,()->{
+                cartService.removeItem(1L);
+            });
+    }
+    @Test
+    public void removeItemTestThrowsItemNotFoundException()throws Exception{
+        Cart cart = new Cart();
+        cart.setId(10L);
+        cart.setTotal(0);
+
+        Item item  =new Item();
+        item.setId(1L);
+        item.setName("MockItem");
+        item.setDescription("MockDesc");
+        item.setPrice(12);
+        item.setColor(Color.BLACK);
+        item.setGender(Gender.MAN);
+        item.setSize(Size._80E);
+        item.setSku(2);
+        item.setCategory(Category.BRA);
+
+        ArrayList<Item> items = new ArrayList<>();
+        items.add(item);
+        cart.setItems(items);
+
+        User user = new User();
+        user.setUsername("peter");
+        user.setCart(cart);
+
+        Mockito.when(jwtUserDetailsService.getUserFromToken()).thenReturn(user);
+        Mockito.when(cartRepository.findCartById(10L)).thenReturn(cart);
+        Mockito.when(itemRepository.findItemById(1L)).thenReturn(null);
+
+        assertThrows(ItemNotFoundException.class,()->{
+            cartService.removeItem(1L);
+        });
     }
 
     @Test
