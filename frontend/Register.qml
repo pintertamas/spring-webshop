@@ -44,6 +44,7 @@ Item {
             Layout.fillWidth: true
             placeholderText: "+36201234567 or 06201234567"
         }
+
         Popup {
             id: popup
             height: 300
@@ -52,7 +53,7 @@ Item {
             padding: 10
 
                 contentItem: Text {
-                    text: "LOGGED IN"
+                    text: "REGISTRATION COMPLETE"
                 }
        }
 

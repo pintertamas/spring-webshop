@@ -37,7 +37,7 @@ Item {
                 contentItem: Text {
                     text: "LOGGED IN"
                 }
-       }
+        }
 
         Button {
             id: proccessButton
