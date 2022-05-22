@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>Login.qml</file>
+        <file>Register.qml</file>
+        <file>Cart.qml</file>
+        <file>Cloth.qml</file>
+        <file>Shop.qml</file>
+        <file>CreateItem.qml</file>
+        <file>CartCloth.qml</file>
+    </qresource>
+</RCC>
